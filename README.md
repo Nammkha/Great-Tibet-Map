@@ -1,17 +1,20 @@
-# Chöl-kha-sum — an interactive map of the three regions of Tibet
+# Great Tibet Map
 
-[![License: MIT](https://img.shields.io/badge/code-MIT-blue.svg)](LICENSE)
-[![Map: CC BY 4.0](https://img.shields.io/badge/map%20%26%20text-CC%20BY%204.0-green.svg)](LICENSE)
+**An interactive map of Ü-Tsang, Kham and Amdo — the three regions of Tibet.**
+
+ཆོལ་ཁ་གསུམ་ · *chöl-kha-sum*, "the three provinces": the way Tibetans have long
+described their own country. Click a region and the panel tells you its Tibetan
+name, its dialect, its landscape, its principal towns, its area as drawn, and
+the present-day units it now falls under.
+
+[![Code: MIT](https://img.shields.io/badge/code-MIT-blue.svg)](LICENSE)
+[![Map & text: CC BY 4.0](https://img.shields.io/badge/map%20%26%20text-CC%20BY%204.0-green.svg)](LICENSE)
 [![Dependencies: none](https://img.shields.io/badge/dependencies-none-brightgreen.svg)](#requirements)
+[![Build step: none](https://img.shields.io/badge/build%20step-none-brightgreen.svg)](#try-it)
 
-An interactive map of **Ü-Tsang**, **Kham** and **Amdo** — the three traditional
-regions of Tibet, ཆོལ་ཁ་གསུམ་ (*chöl-kha-sum*). Click a region and the panel gives
-its Tibetan name, its dialect, its landscape, its principal towns, its area as
-drawn, and the present-day units it now falls under.
-
-It is one self-contained HTML file. No build step, no framework, no npm
-install, no tracking, nothing to configure before it works. Drop it on a
-server, or paste one block into a page you already have.
+The whole thing is one self-contained HTML file. No framework, no build step,
+no `npm install`, no tracking, nothing to configure before it works. Drop it on
+a server, or paste a single block into a page you already have.
 
 ![The three traditional regions of Tibet: Ü-Tsang, Kham and Amdo](tibet-three-regions-dark.svg)
 
@@ -31,18 +34,17 @@ server, or paste one block into a page you already have.
 
 ## Try it
 
-Download or clone the repository and open `tibet-three-regions-map.html` in any
-browser. That is the whole demo — there is nothing to install and no server to
-start.
+Clone the repository and open `tibet-three-regions-map.html` in any browser.
+That is the whole demo — nothing to install, no server to start.
 
 ```sh
-git clone https://github.com/Nammkha/---Tibet-Ch-l-kha-sum-Interative-Map-wiget.git
-cd ---Tibet-Ch-l-kha-sum-Interative-Map-wiget
-open tibet-three-regions-map.html      # macOS; use xdg-open or start elsewhere
+git clone https://github.com/Nammkha/Great-Tibet-Map.git
+cd Great-Tibet-Map
+open tibet-three-regions-map.html      # macOS; xdg-open on Linux, start on Windows
 ```
 
 To publish a live copy, enable **GitHub Pages** on your fork (Settings → Pages →
-deploy from the default branch); the widget is a static file and needs nothing
+deploy from the default branch). The widget is a static file and needs nothing
 else.
 
 ## Use it on your site
@@ -56,7 +58,8 @@ else.
 | `LICENSE` | MIT for the code, CC BY 4.0 for the map and text. |
 
 **Option 1 — iframe.** Fully isolated from your CSS; you only have to pick a
-height (`INTEGRATION.md` has a `postMessage` snippet that makes it self-sizing).
+height. [`INTEGRATION.md`](INTEGRATION.md) has a `postMessage` snippet that
+makes it self-sizing.
 
 ```html
 <iframe src="/maps/tibet-three-regions-map.html"
@@ -71,8 +74,8 @@ block is the container div, its `<style>` and its `<script>` — nothing else is
 needed. Every selector is scoped to `.tibmap` and every SVG class is prefixed
 `tm-`, so it will not collide with your stylesheet.
 
-**Option 3 — static image.** Use the two SVGs in a `<picture>` element to
-follow the visitor's colour scheme:
+**Option 3 — static image.** Use the two SVGs in a `<picture>` element so the
+map follows the visitor's colour scheme:
 
 ```html
 <picture>
@@ -149,7 +152,7 @@ families. **Noto Serif Tibetan is load-bearing:** most systems have no Tibetan
 font, and without it every ཆོལ་ཁ་གསུམ string renders as empty boxes — self-host
 it if you cannot call Google. **Fraunces** (display) and **IBM Plex Sans** (UI)
 are cosmetic; delete the `@import` and they fall back to Georgia and your
-system UI font. Removing the import entirely makes the widget fully offline.
+system UI font. Remove the import entirely and the widget is fully offline.
 
 ## About the boundaries
 
@@ -222,8 +225,8 @@ Dual-licensed, because this is part software and part cartographic work:
 In short: use it anywhere, commercially included. If you reuse the map or the
 writing, credit the project:
 
-> Map of Ü-Tsang, Kham and Amdo by Nammkha, CC BY 4.0 —
-> https://github.com/Nammkha/---Tibet-Ch-l-kha-sum-Interative-Map-wiget
+> Great Tibet Map by Nammkha, CC BY 4.0 —
+> https://github.com/Nammkha/Great-Tibet-Map
 
 The Google Fonts families are not part of this repository and carry their own
 SIL Open Font License.
