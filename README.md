@@ -12,6 +12,8 @@ the present-day units it now falls under.
 [![Dependencies: none](https://img.shields.io/badge/dependencies-none-brightgreen.svg)](#requirements)
 [![Build step: none](https://img.shields.io/badge/build%20step-none-brightgreen.svg)](#try-it)
 
+**Live demo → <https://nammkha.github.io/Great-Tibet-Map/>**
+
 The whole thing is one self-contained HTML file. No framework, no build step,
 no `npm install`, no tracking, nothing to configure before it works. Drop it on
 a server, or paste a single block into a page you already have.
@@ -34,8 +36,10 @@ a server, or paste a single block into a page you already have.
 
 ## Try it
 
-Clone the repository and open `tibet-three-regions-map.html` in any browser.
-That is the whole demo — nothing to install, no server to start.
+Open <https://nammkha.github.io/Great-Tibet-Map/> — that is the map, hosted.
+
+To run it yourself, clone the repository and open `tibet-three-regions-map.html`
+in any browser. Nothing to install, no server to start.
 
 ```sh
 git clone https://github.com/Nammkha/Great-Tibet-Map.git
@@ -43,9 +47,9 @@ cd Great-Tibet-Map
 open tibet-three-regions-map.html      # macOS; xdg-open on Linux, start on Windows
 ```
 
-To publish a live copy, enable **GitHub Pages** on your fork (Settings → Pages →
-deploy from the default branch). The widget is a static file and needs nothing
-else.
+To publish your own copy, enable **GitHub Pages** on your fork (Settings → Pages
+→ deploy from the default branch). Everything here is static; there is nothing
+to build.
 
 ## Use it on your site
 
@@ -54,8 +58,10 @@ else.
 | `tibet-three-regions-map.html` | The interactive widget. Open directly or embed. |
 | `tibet-three-regions-dark.svg` | Static map, dark. For `<img>`, a CMS, or print. |
 | `tibet-three-regions-light.svg` | Static map, light. |
+| `index.html` | The project's landing page, served by GitHub Pages. |
 | `INTEGRATION.md` | Full integration, theming and API reference. |
 | `LICENSE` | MIT for the code, CC BY 4.0 for the map and text. |
+| `og-image.png`, `sitemap.xml` | Social-share card and sitemap for the hosted site. |
 
 **Option 1 — iframe.** Fully isolated from your CSS; you only have to pick a
 height. [`INTEGRATION.md`](INTEGRATION.md) has a `postMessage` snippet that

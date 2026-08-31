@@ -3,7 +3,17 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Chöl-kha-sum — the three regions of Tibet</title>
+<title>Interactive map of Tibet — Ü-Tsang, Kham and Amdo</title>
+<meta name="description" content="Interactive map of the three regions of Tibet: Ü-Tsang, Kham and Amdo. Bilingual labels, area figures and an overlay of present-day borders.">
+<link rel="canonical" href="https://nammkha.github.io/Great-Tibet-Map/">
+<meta name="theme-color" content="#0B1117">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Map of Tibet: Ü-Tsang, Kham and Amdo">
+<meta property="og:description" content="An interactive map of the three traditional regions of Tibet. Free, open source, embeddable in any site.">
+<meta property="og:url" content="https://nammkha.github.io/Great-Tibet-Map/">
+<meta property="og:image" content="https://nammkha.github.io/Great-Tibet-Map/og-image.png">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="icon" href="tibet-three-regions-dark.svg" type="image/svg+xml">
 <style>
   html,body{margin:0;padding:0;background:#080d12;}
   body{min-height:100vh;display:flex;align-items:center;justify-content:center;padding:24px 16px;box-sizing:border-box;}
@@ -533,6 +543,16 @@
 })();
 </script>
 <!-- ══════════ COPY TO HERE ══════════ -->
+
+<script>
+/* Report our height to a parent page, so an embedding iframe can size itself.
+   Not part of the widget — safe to drop when pasting the block above inline. */
+if (window.parent !== window && window.ResizeObserver) {
+  new ResizeObserver(function () {
+    parent.postMessage({ tibmapHeight: document.body.scrollHeight }, '*');
+  }).observe(document.body);
+}
+</script>
 
 </body>
 </html>
