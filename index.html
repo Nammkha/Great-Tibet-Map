@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<title>Map of Tibet: Ü-Tsang, Kham and Amdo — Great Tibet Map</title>
+<meta name="description" content="An interactive map of the three regions of Tibet — Ü-Tsang, Kham and Amdo. Bilingual labels, area figures, today's borders. Free, open source, embeddable.">
+<link rel="canonical" href="https://nammkha.github.io/Great-Tibet-Map/">
+<meta name="author" content="Nammkha">
+<meta name="theme-color" content="#0B1117">
+
+<meta property="og:type" content="website">
+<meta property="og:site_name" content="Great Tibet Map">
+<meta property="og:url" content="https://nammkha.github.io/Great-Tibet-Map/">
+<meta property="og:title" content="Map of Tibet: Ü-Tsang, Kham and Amdo">
+<meta property="og:description" content="An interactive map of the three traditional regions of Tibet — Ü-Tsang, Kham and Amdo. Free, open source, embeddable in any site.">
+<meta property="og:image" content="https://nammkha.github.io/Great-Tibet-Map/og-image.png">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="630">
+<meta property="og:image:alt" content="Map of the three traditional regions of Tibet: Ü-Tsang, Kham and Amdo">
+<meta property="og:locale" content="en_US">
+
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Map of Tibet: Ü-Tsang, Kham and Amdo">
+<meta name="twitter:description" content="An interactive map of the three traditional regions of Tibet. Free, open source, embeddable.">
+<meta name="twitter:image" content="https://nammkha.github.io/Great-Tibet-Map/og-image.png">
+
+<link rel="icon" href="tibet-three-regions-dark.svg" type="image/svg+xml">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@graph": [
+    {
+      "@type": "WebSite",
+      "@id": "https://nammkha.github.io/Great-Tibet-Map/#website",
+      "url": "https://nammkha.github.io/Great-Tibet-Map/",
+      "name": "Great Tibet Map",
+      "inLanguage": "en"
+    },
+    {
+      "@type": "WebApplication",
+      "@id": "https://nammkha.github.io/Great-Tibet-Map/#app",
+      "name": "Great Tibet Map",
+      "url": "https://nammkha.github.io/Great-Tibet-Map/",
+      "applicationCategory": "Map",
+      "operatingSystem": "Any modern web browser",
+      "browserRequirements": "Requires JavaScript",
+      "description": "An interactive map of the three traditional regions of Tibet — Ü-Tsang, Kham and Amdo — with bilingual labels, area figures and an overlay of present-day borders.",
+      "isAccessibleForFree": true,
+      "license": "https://creativecommons.org/licenses/by/4.0/",
+      "author": { "@type": "Person", "name": "Nammkha" },
+      "offers": { "@type": "Offer", "price": "0", "priceCurrency": "USD" }
+    },
+    {
+      "@type": "Map",
+      "@id": "https://nammkha.github.io/Great-Tibet-Map/#map",
+      "name": "The three regions of Tibet: Ü-Tsang, Kham and Amdo",
+      "mapType": "https://schema.org/VenueMap",
+      "about": {
+        "@type": "Place",
+        "name": "Tibet",
+        "alternateName": "Bod",
+        "geo": { "@type": "GeoCoordinates", "latitude": 32.0, "longitude": 88.0 }
+      },
+      "license": "https://creativecommons.org/licenses/by/4.0/"
+    }
+  ]
+}
+</script>
+
+<style>
+  :root{
+    --bg:#0B1117; --panel:#101922; --rule:#22303A; --hair:#31404B;
+    --ink:#EFE7D8; --dim:#8FA0AC; --gold:#D9A441;
+    --utsang:#B23A48; --kham:#2F6E8F; --amdo:#3F8F6B;
+    --display:'Fraunces','Iowan Old Style',Georgia,serif;
+    --ui:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+    --bo:'Noto Serif Tibetan','Kailasa','Microsoft Himalaya',serif;
+  }
+  *{box-sizing:border-box;}
+  html{-webkit-text-size-adjust:100%;}
+  body{margin:0;background:var(--bg);color:var(--ink);font:16px/1.65 var(--ui);}
+  .wrap{max-width:1180px;margin:0 auto;padding:0 20px;}
+  a{color:var(--gold);}
+  a:hover{color:#EFC169;}
+
+  header{padding:56px 0 28px;border-bottom:1px solid var(--rule);}
+  .kicker{margin:0 0 10px;font-size:12px;letter-spacing:.22em;text-transform:uppercase;color:var(--dim);}
+  h1{margin:0 0 6px;font:600 clamp(30px,5vw,48px)/1.12 var(--display);letter-spacing:-.01em;}
+  .bo{margin:0 0 16px;font-family:var(--bo);font-size:26px;color:var(--gold);line-height:1.9;}
+  .lede{margin:0;max-width:62ch;font-size:18px;color:#CFD9E0;}
+
+  main{padding:36px 0 0;}
+  section{padding:34px 0;border-bottom:1px solid var(--rule);}
+  h2{margin:0 0 12px;font:600 clamp(21px,3vw,27px)/1.25 var(--display);}
+  h3{margin:26px 0 6px;font:600 18px/1.3 var(--ui);}
+  p{max-width:70ch;}
+  .dim{color:var(--dim);}
+
+  .mapframe{width:100%;height:1050px;border:1px solid var(--rule);border-radius:2px;background:var(--panel);display:block;}
+  .mapnote{margin:10px 0 0;font-size:13.5px;color:var(--dim);}
+
+  .regions{display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));margin-top:22px;}
+  .region{background:var(--panel);border:1px solid var(--rule);border-top:3px solid var(--c);padding:20px;}
+  .region h3{margin:0 0 2px;font:600 20px/1.2 var(--display);}
+  .region .rbo{font-family:var(--bo);font-size:19px;color:var(--c);line-height:2;margin:0 0 8px;}
+  .region p{font-size:14.5px;color:#CFD9E0;margin:0 0 14px;}
+  .region dl{margin:0;font-size:13.5px;}
+  .region dt{color:var(--dim);}
+  .region dd{margin:0 0 8px;}
+
+  table{border-collapse:collapse;margin:18px 0 0;font-size:14.5px;width:100%;max-width:560px;}
+  th,td{padding:8px 12px;border-bottom:1px solid var(--rule);text-align:left;}
+  td+td,th+th{text-align:right;}
+  th{color:var(--dim);font-weight:500;}
+
+  pre{overflow-x:auto;background:var(--panel);border:1px solid var(--rule);padding:14px 16px;font-size:13px;line-height:1.6;}
+  code{font-family:ui-monospace,SFMono-Regular,Menlo,monospace;}
+
+  footer{padding:30px 0 60px;font-size:14px;color:var(--dim);}
+  footer p{max-width:70ch;}
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+<header>
+  <p class="kicker">Chöl-kha-sum · ཆོལ་ཁ་གསུམ་</p>
+  <h1>The three regions of Tibet</h1>
+  <p class="bo">དབུས་གཙང་ · ཁམས་ · ཨ་མདོ་</p>
+  <p class="lede">An interactive map of <strong>Ü-Tsang</strong>, <strong>Kham</strong> and
+  <strong>Amdo</strong> — the three regions Tibetans have long used to describe their own
+  country. Select a region for its Tibetan name, dialect, landscape and area, or turn on
+  today's borders to compare the traditional map with the present one.</p>
+</header>
+
+<main>
+
+<section id="map">
+  <h2>Interactive map of Tibet</h2>
+  <iframe class="mapframe" id="tibmap-frame"
+          src="tibet-three-regions-map.html"
+          loading="lazy"
+          title="Interactive map of the three regions of Tibet: Ü-Tsang, Kham and Amdo"></iframe>
+  <p class="mapnote">Click a region, or use <kbd>Tab</kbd> and <kbd>Enter</kbd>. Labels switch
+  between English and Tibetan; the <em>Current borders</em> button overlays today's Tibet
+  Autonomous Region and provincial boundaries.</p>
+</section>
+
+<section id="regions">
+  <h2>Ü-Tsang, Kham and Amdo</h2>
+  <p>Chöl-kha-sum, "the three provinces", is an old division of the Tibetan plateau by
+  dialect, landscape and history rather than by administration. A Tibetan saying gives each
+  region its reputation: <em>the best religion from Ü-Tsang, the best men from Kham, the best
+  horses from Amdo.</em></p>
+
+  <div class="regions">
+    <article class="region" style="--c:var(--utsang)">
+      <h3>Ü-Tsang</h3>
+      <p class="rbo">དབུས་གཙང་</p>
+      <p>The two old provinces of Ü (around Lhasa) and Tsang (around Shigatse), together with
+      Ngari in the far west and the high Changthang plains in the north. This was the seat of
+      Tibet's central government, and the ground of its major Gelug and Sakya institutions.</p>
+      <dl>
+        <dt>Principal towns</dt><dd>Lhasa · Shigatse · Gyantse</dd>
+        <dt>Dialect group</dt><dd>Central Tibetan (Ü-ké, Tsang-ké)</dd>
+        <dt>Area as drawn</dt><dd>1,077,976 km²</dd>
+        <dt>Today</dt><dd>Most of the Tibet Autonomous Region</dd>
+      </dl>
+    </article>
+
+    <article class="region" style="--c:var(--kham)">
+      <h3>Kham</h3>
+      <p class="rbo">ཁམས་</p>
+      <p>A country of forested gorges where the Drichu, Dzachu and Ngulchu — the Yangtze,
+      Mekong and Salween — run south in parallel. Historically a patchwork of semi-independent
+      kingdoms and monastic estates such as Derge, Lithang and Nangchen, rather than a single
+      administration.</p>
+      <dl>
+        <dt>Principal towns</dt><dd>Chamdo · Dartsedo · Jyekundo</dd>
+        <dt>Dialect group</dt><dd>Khams-ké</dd>
+        <dt>Area as drawn</dt><dd>542,279 km²</dd>
+        <dt>Today</dt><dd>Chamdo (TAR), Garzê, western Ngawa &amp; Muli, Yushu, Dêqên</dd>
+      </dl>
+    </article>
+
+    <article class="region" style="--c:var(--amdo)">
+      <h3>Amdo</h3>
+      <p class="rbo">ཨ་མདོ་</p>
+      <p>High grassland and salt basin around Lake Kokonor and the headwaters of the Machu, the
+      Yellow River. Long the country of pastoral nomads and of large teaching monasteries —
+      Kumbum and Labrang among them. Tsongkhapa and the 14th Dalai Lama were both born here.</p>
+      <dl>
+        <dt>Principal towns</dt><dd>Xining · Labrang · Golog</dd>
+        <dt>Dialect group</dt><dd>Amdo-ké</dd>
+        <dt>Area as drawn</dt><dd>563,220 km²</dd>
+        <dt>Today</dt><dd>Most of Qinghai, Gannan (Gansu), northern Ngawa (Sichuan)</dd>
+      </dl>
+    </article>
+  </div>
+</section>
+
+<section id="boundaries">
+  <h2>How the boundaries were drawn</h2>
+  <p>The regions are built by grouping present-day prefectures, then dissolving and projecting
+  them in an Albers equal-area conic (standard parallels 26°N / 41°N, central meridian 92°E).
+  The areas below are therefore measurements of the shapes shown, not figures quoted from
+  elsewhere.</p>
+
+  <table>
+    <thead><tr><th>Region</th><th>Area as drawn</th><th>Share</th></tr></thead>
+    <tbody>
+      <tr><td>Ü-Tsang</td><td>1,077,976 km²</td><td>49.4%</td></tr>
+      <tr><td>Kham</td><td>542,279 km²</td><td>24.8%</td></tr>
+      <tr><td>Amdo</td><td>563,220 km²</td><td>25.8%</td></tr>
+      <tr><td><strong>Combined</strong></td><td><strong>2,183,475 km²</strong></td><td></td></tr>
+    </tbody>
+  </table>
+
+  <h3>These are cultural regions, not administrative units</h3>
+  <p>Their historical limits were never surveyed, they shifted over time, and different sources
+  draw them differently — especially along the Gyalrong, Kongpo and Kokonor margins. Treat the
+  lines as indicative; the <em>Current borders</em> toggle overlays today's boundaries so you
+  can compare the two directly.</p>
+
+  <h3>Excluded territory</h3>
+  <p>The source prefecture data is Chinese and draws PRC claim lines, so it originally swallowed
+  Arunachal Pradesh and part of Ladakh. Every region here is clipped against the actual
+  boundaries of India, Nepal, Bhutan, Bangladesh and Myanmar: nothing administered by those
+  states appears inside the highlight, and the paths themselves no longer contain that ground.</p>
+
+  <h3>Checked against a reference</h3>
+  <p>The silhouette was compared with a published Tibetan cultural-area map by extracting that
+  map's outline and fitting the two together; they agree over 92.9% of their combined area.</p>
+</section>
+
+<section id="embed">
+  <h2>Use this map on your own site</h2>
+  <p>The map is one self-contained HTML file — no build step, no framework, no dependencies. It
+  is free to use, including commercially. The quickest way is an iframe:</p>
+<pre><code>&lt;iframe src="https://nammkha.github.io/Great-Tibet-Map/tibet-three-regions-map.html"
+        style="width:100%;height:1050px;border:0"
+        loading="lazy"
+        title="The three regions of Tibet"&gt;&lt;/iframe&gt;</code></pre>
+  <p>You can also paste the widget straight into your own page, restyle it with CSS custom
+  properties, or drive it from JavaScript. Static SVG versions are included for print and for
+  content systems that cannot run scripts. Full instructions are in the
+  <a href="https://github.com/Nammkha/Great-Tibet-Map">project repository on GitHub</a>.</p>
+</section>
+
+</main>
+
+<footer>
+  <p><strong>Great Tibet Map</strong> — open source. Code under the MIT licence; the map
+  geometry and the writing under
+  <a href="https://creativecommons.org/licenses/by/4.0/" rel="license">CC BY 4.0</a>. Reuse it
+  anywhere with credit. Corrections and pull requests are welcome on
+  <a href="https://github.com/Nammkha/Great-Tibet-Map">GitHub</a>.</p>
+</footer>
+
+</div>
+
+<script>
+/* Let the embedded widget report its height, so the iframe never scrolls. */
+window.addEventListener('message', function (e) {
+  if (e.data && e.data.tibmapHeight) {
+    document.getElementById('tibmap-frame').style.height = e.data.tibmapHeight + 'px';
+  }
+});
+</script>
+
+</body>
+</html>
