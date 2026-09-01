@@ -169,10 +169,10 @@ shapes actually shown, not numbers quoted from elsewhere:
 
 | Region | Area as drawn | Share |
 |---|---:|---:|
-| Ü-Tsang | 1,077,976 km² | 49.4% |
-| Kham | 542,279 km² | 24.8% |
+| Ü-Tsang | 1,073,363 km² | 49.3% |
+| Kham | 542,279 km² | 24.9% |
 | Amdo | 563,220 km² | 25.8% |
-| **Combined** | **2,183,475 km²** | |
+| **Combined** | **2,178,862 km²** | |
 
 **These are traditional cultural regions, not administrative units.** Their
 historical limits were never surveyed, they shifted over time, and different

@@ -174,6 +174,12 @@ follows the Himalayan frontier and the western edge stops short of Ladakh and
 Jammu & Kashmir. This is done in the build step, not in CSS — the paths
 themselves no longer contain that ground.
 
+In the west the line is checked against Natural Earth 10m, which draws
+boundaries as they are administered on the ground. That check moved the
+Demchok salient — about 4,600 km² east of Ladakh that the source data placed
+inside Ü-Tsang — back onto the Indian side, and the Ü-Tsang figure below
+reflects the smaller shape.
+
 The same rule applies to the **Current borders** overlay. Its dashed lines are
 clipped to the same footprint, so no dashed boundary runs through territory
 administered by India, Nepal, Bhutan, Bangladesh or Myanmar; where a provincial
@@ -198,5 +204,5 @@ together: they agree over 92.9% of their combined area. The residual differences
 are the fringe of a few tens of kilometres, plus Arunachal Pradesh, which lies
 outside this map by design.
 
-**Areas as drawn:** Ü-Tsang 1,077,976 km² · Kham 542,279 km² ·
-Amdo 563,220 km² · combined 2,183,475 km².
+**Areas as drawn:** Ü-Tsang 1,073,363 km² · Kham 542,279 km² ·
+Amdo 563,220 km² · combined 2,178,862 km².
