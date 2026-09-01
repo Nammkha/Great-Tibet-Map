@@ -116,13 +116,15 @@
   transition:opacity .25s ease;
 }
 .tibmap__seg:focus-visible{outline:2px solid var(--tm-gold);outline-offset:3px;}
+/* The block keeps a constant 14px box and thickens by painting into it, so
+   selecting or hovering a region never reflows the header and nudges the map. */
 .tibmap__seg i{
-  display:block;height:8px;background:var(--tm-c);
-  transition:height .25s ease,filter .25s ease;
+  display:block;height:14px;background:var(--tm-c) top/100% 8px no-repeat;
+  transition:background-size .25s ease,filter .25s ease;
 }
-.tibmap__seg:hover i,.tibmap__seg[aria-pressed="true"] i{height:14px;}
+.tibmap__seg:hover i,.tibmap__seg[aria-pressed="true"] i{background-size:100% 14px;}
 .tibmap__seg u{
-  display:block;text-decoration:none;padding-top:9px;
+  display:block;text-decoration:none;padding-top:3px;
   font-size:11.5px;letter-spacing:.13em;text-transform:uppercase;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
@@ -136,8 +138,13 @@
 .tibmap__body{display:grid;grid-template-columns:minmax(0,1fr) 316px;}
 @container (max-width:900px){ .tibmap__body{grid-template-columns:minmax(0,1fr);} }
 
-.tibmap__stage{position:relative;background:var(--tm-bg);min-width:0;display:flex;align-items:center;}
-.tibmap__svg{display:block;width:100%;height:auto;}
+/* The SVG's own ratio sets the stage's natural height; when the panel beside it
+   is taller, the stage stretches and the map fills that height instead of being
+   letterboxed. `overflow:visible` lets the SVG paint the land and graticule that
+   already exist outside the viewBox into the extra space, so there is never a
+   blank band or a hard cut at the map's edge; the stage clips the sideways spill. */
+.tibmap__stage{position:relative;background:var(--tm-bg);min-width:0;overflow:hidden;}
+.tibmap__svg{display:block;width:100%;height:100%;overflow:visible;}
 
 /* ── map layers ──────────────────────────────────────────── */
 .tibmap .tm-sea{fill:var(--tm-bg);}
@@ -204,8 +211,13 @@
 
 /* ── panel ───────────────────────────────────────────────── */
 .tibmap__panel{
-  border-left:1px solid var(--tm-rule);background:var(--tm-panel);
-  padding:24px 24px 22px;display:flex;flex-direction:column;gap:16px;min-width:0;
+  border-left:1px solid var(--tm-rule);background:var(--tm-panel);min-width:0;
+}
+/* --tm-panel-h is measured at runtime as the tallest of the four panels, so
+   moving between regions never changes the widget's height. */
+.tibmap__pbody{
+  padding:24px 24px 22px;display:flex;flex-direction:column;gap:16px;
+  min-height:var(--tm-panel-h,0px);
 }
 @container (max-width:900px){ .tibmap__panel{border-left:0;border-top:1px solid var(--tm-rule);} }
 
@@ -265,7 +277,7 @@
   .tibmap__head{padding:20px 18px 16px;}
   .tibmap__foot{padding:12px 18px 16px;gap:8px 14px;}
   .tibmap__note{padding:0 18px 20px;}
-  .tibmap__panel{padding:20px 18px;}
+  .tibmap__pbody{padding:20px 18px;}
   .tibmap__seg s{display:none;}
   .tibmap__seg u{font-size:10.5px;letter-spacing:.1em;}
   .tibmap .tm-rname{font-size:60px;stroke-width:7px;}
@@ -412,7 +424,7 @@
       inset+
       '</svg>'+
     '</div>'+
-    '<aside class="tibmap__panel" id="tibmap-panel" aria-live="polite"></aside>'+
+    '<aside class="tibmap__panel" id="tibmap-panel" aria-live="polite"><div class="tibmap__pbody"></div></aside>'+
   '</div>'+
   '<div class="tibmap__foot">'+
     '<button class="tibmap__ctrl" type="button" data-act="labels">Labels: Both</button>'+
@@ -424,13 +436,13 @@
   '<p class="tibmap__note">Historically Tibet was divided into three cultural regions called \u00dc-Tsang, Kham and Amdo. Each one of these three regions has developed its own distinct dialect of Tibetan. Most widely spoken is the Lhasa dialect, also called Standard Tibetan, which is spoken in Central Tibet and also in Exile by most Tibetans. In Kham the Khams Tibetan dialect is spoken and in Amdo the Amdo Tibetan dialect. The Tibetan dialects are subject to the Tibetic languages which are part of the Tibeto-Burman languages. Modern Tibetan derives from Classical Tibetan, which is the written norm, and from Old Tibetan. The official language of Bhutan, Dzongkha, is also closely related to Tibetan.</p>';
 
   /* ── behaviour ──────────────────────────────────────── */
-  var panel=root.querySelector('#tibmap-panel');
+  var panel=root.querySelector('.tibmap__pbody');
   var listeners=[];
   var LABEL_MODES=['both','en','bo'], LABEL_TEXT={both:'Both',en:'English',bo:'Tibetan'};
 
-  function renderPanel(k){
+  function panelHTML(k){
     if(!k){
-      panel.innerHTML =
+      return ''+
         '<div class="tibmap__mark" style="--tm-c:var(--tm-gold)"></div>'+
         '<p class="tibmap__pkicker">Chöl-kha-sum</p>'+
         '<h3 class="tibmap__pname">Three regions, one plateau</h3>'+
@@ -441,10 +453,9 @@
           '<li><span>Regions shown</span><span>3</span></li>'+
         '</ul>'+
         '<blockquote class="tibmap__quote">The best religion from Ü-Tsang, the best men from Kham, the best horses from Amdo.<cite>Tibetan saying</cite></blockquote>';
-      return;
     }
     var r=REGIONS[k], d=DATA.regions[k];
-    panel.innerHTML =
+    return ''+
       '<div class="tibmap__mark" style="--tm-c:var(--tm-'+k+')"></div>'+
       '<div>'+
         '<p class="tibmap__pkicker">'+r.kicker+'</p>'+
@@ -458,6 +469,29 @@
         r.facts.map(function(f){return '<li><span>'+f[0]+'</span><span>'+f[1]+'</span></li>';}).join('')+
         '<li><span>Today</span><span>'+r.today+'</span></li>'+
       '</ul>';
+  }
+
+  function renderPanel(k){ panel.innerHTML=panelHTML(k); }
+
+  /* Reserve the height of the tallest panel. Without it the panel — the taller
+     of the two grid cells — resizes the row every time the region changes,
+     which letterboxes the map and resizes any frame embedding the widget.
+     Re-measured only when the panel's width changes, so it cannot loop. */
+  var reservedFor=-1;
+  function reservePanel(){
+    var w=panel.clientWidth;
+    if(w===reservedFor||!w) return;
+    reservedFor=w;
+    var cur=root.getAttribute('data-selected')||'', tallest=0, live=panel.parentNode;
+    live.setAttribute('aria-live','off');   /* do not announce the measuring */
+    root.style.setProperty('--tm-panel-h','0px');
+    [''].concat(ORDER).forEach(function(k){
+      renderPanel(k);
+      tallest=Math.max(tallest,panel.getBoundingClientRect().height);
+    });
+    renderPanel(cur);
+    root.style.setProperty('--tm-panel-h',Math.ceil(tallest)+'px');
+    live.setAttribute('aria-live','polite');
   }
 
   function select(k){
@@ -529,7 +563,15 @@
   root.querySelector('[data-act="admin"]').setAttribute('aria-pressed',root.getAttribute('data-admin')==='true');
   root.querySelector('[data-act="cities"]').setAttribute('aria-pressed',root.getAttribute('data-cities')!=='false');
   root.querySelector('[data-act="labels"]').textContent='Labels: '+(LABEL_TEXT[root.getAttribute('data-labels')]||'Both');
+  reservePanel();
   select(root.getAttribute('data-selected')||'');
+
+  if(window.ResizeObserver) new ResizeObserver(reservePanel).observe(root);
+  else window.addEventListener('resize',reservePanel);
+  /* Web fonts change the text metrics, so measure again once they are in. */
+  if(document.fonts&&document.fonts.ready){
+    document.fonts.ready.then(function(){reservedFor=-1;reservePanel();});
+  }
 
   window.TibetMap={
     select:select,
