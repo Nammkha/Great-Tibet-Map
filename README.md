@@ -2,7 +2,7 @@
 
 **An interactive map of Ü-Tsang, Kham and Amdo — the three regions of Tibet.**
 
-ཆོལ་ཁ་གསུམ་ · *chöl-kha-sum*, "the three provinces": the way Tibetans have long
+ཆོལ་ཁ་གསུམ་ · *chöl-kha-sum*, "the three regions of Great Tibet": the way Tibetans have long
 described their own country. Click a region and the panel tells you its Tibetan
 name, its dialect, its landscape, its principal towns, its area as drawn, and
 the present-day units it now falls under.
@@ -174,7 +174,7 @@ shapes actually shown, not numbers quoted from elsewhere:
 | Amdo | 563,220 km² | 25.8% |
 | **Combined** | **2,178,862 km²** | |
 
-**These are traditional cultural regions, not administrative units.** Their
+**These are traditional cultural regions of Great Tibet** Their
 historical limits were never surveyed, they shifted over time, and different
 sources draw them differently — especially along the Gyalrong, Kongpo and
 Kokonor margins. Treat the lines as indicative; the *Current borders* toggle
@@ -236,7 +236,7 @@ Dual-licensed, because this is part software and part cartographic work:
 In short: use it anywhere, commercially included. If you reuse the map or the
 writing, credit the project:
 
-> Great Tibet Map by Nammkha, CC BY 4.0 —
+> Great Tibet Map by Zorawae Bhum, CC BY 4.0 —
 > https://github.com/Nammkha/Great-Tibet-Map
 
 The Google Fonts families are not part of this repository and carry their own
