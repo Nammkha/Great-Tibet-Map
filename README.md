@@ -180,17 +180,19 @@ sources draw them differently — especially along the Gyalrong, Kongpo and
 Kokonor margins. Treat the lines as indicative; the *Current borders* toggle
 overlays today's boundaries so a reader can compare.
 
-**Excluded territory.** The source prefecture data is Chinese and draws PRC
-claim lines, so it originally swallowed Arunachal Pradesh and part of Ladakh.
-Every region is clipped against the actual boundaries of India, Nepal, Bhutan,
-Bangladesh and Myanmar: nothing administered by those states appears inside the
-highlight, and the paths themselves no longer contain that ground.
+**Internationally recognised boundaries only.** Every line on the map — the
+region outlines and the *Current borders* overlay alike — follows the
+internationally recognised boundary. Territory administered by India (including
+Arunachal Pradesh, Ladakh and Jammu & Kashmir), Nepal, Bhutan, Bangladesh and
+Myanmar lies outside every boundary shown: nothing administered by those states
+falls inside the highlight or under a dashed line, and the paths themselves no
+longer contain that ground.
 
 **Checked against a reference.** The silhouette was compared with a published
 Tibetan cultural-area map by extracting that map's outline and fitting the two
 together; they agree over 92.9% of their combined area. The remainder is a
-fringe of a few tens of kilometres, plus Arunachal Pradesh, excluded here by
-design.
+fringe of a few tens of kilometres, plus Arunachal Pradesh, which lies outside
+this map by design.
 
 [`INTEGRATION.md`](INTEGRATION.md) documents the prefecture grouping for each
 region and the northern-rim closure in full.

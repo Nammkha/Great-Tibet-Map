@@ -167,13 +167,18 @@ rather than quoted numbers.
 - **Amdo** — Xining, Haidong, Haibei, Malho, Tsolho, Golog, Tsonub, Kanlho, and
   northern Ngawa (Ngawa, Dzoge, Marthang, Dzamthang, Zungchu, Zitsa Degu).
 
-**Excluded territory.** The source prefecture data is Chinese and draws PRC
-claim lines, so it originally swallowed Arunachal Pradesh and part of Ladakh.
-Every region is now clipped against the actual boundaries of India, Nepal,
-Bhutan, Bangladesh and Myanmar, so nothing administered by those states appears
-inside the highlight. The southern edge follows the Himalayan frontier and the
-western edge stops short of Ladakh and Jammu & Kashmir. This is done in the
-build step, not in CSS — the paths themselves no longer contain that ground.
+**Internationally recognised boundaries only.** Every region is clipped against
+the boundaries of India, Nepal, Bhutan, Bangladesh and Myanmar, so nothing
+administered by those states appears inside the highlight. The southern edge
+follows the Himalayan frontier and the western edge stops short of Ladakh and
+Jammu & Kashmir. This is done in the build step, not in CSS — the paths
+themselves no longer contain that ground.
+
+The same rule applies to the **Current borders** overlay. Its dashed lines are
+clipped to the same footprint, so no dashed boundary runs through territory
+administered by India, Nepal, Bhutan, Bangladesh or Myanmar; where a provincial
+line meets one of those states it is carried along the internationally
+recognised boundary instead.
 
 **These are traditional cultural regions, not administrative units.** Their
 historical limits were never surveyed, shifted over time, and are drawn
@@ -190,8 +195,8 @@ the outline is the prefecture mosaic as-is.
 **Checked against a reference.** The silhouette was compared with a published
 Tibetan cultural-area map by extracting that map's outline and fitting the two
 together: they agree over 92.9% of their combined area. The residual differences
-are the fringe of a few tens of kilometres, plus Arunachal Pradesh, which is
-excluded here by design.
+are the fringe of a few tens of kilometres, plus Arunachal Pradesh, which lies
+outside this map by design.
 
 **Areas as drawn:** Ü-Tsang 1,077,976 km² · Kham 542,279 km² ·
 Amdo 563,220 km² · combined 2,183,475 km².
