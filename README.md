@@ -180,13 +180,16 @@ sources draw them differently — especially along the Gyalrong, Kongpo and
 Kokonor margins. Treat the lines as indicative; the *Current borders* toggle
 overlays today's boundaries so a reader can compare.
 
-**Internationally recognised boundaries only.** Every line on the map — the
-region outlines and the *Current borders* overlay alike — follows the
-internationally recognised boundary. Territory administered by India (including
-Arunachal Pradesh, Ladakh and Jammu & Kashmir), Nepal, Bhutan, Bangladesh and
-Myanmar lies outside every boundary shown: nothing administered by those states
-falls inside the highlight or under a dashed line, and the paths themselves no
-longer contain that ground.
+**Map scope and context.** This map is intended to show how the historical
+Tibetan territorial divisions correspond to, or overlap with, present-day Chinese
+administrative divisions. It illustrates the traditional territorial divisions of
+Tibet, overlaid onto the current provincial and administrative boundaries of the
+People's Republic of China.
+
+For clarity, this map includes only territories that are currently administered
+by China. It does not depict or claim any Tibetan territories that historically
+formed part of the broader Tibetan cultural or political sphere but are located
+outside the present-day boundaries of Chinese governance.
 
 **Checked against a reference.** The silhouette was compared with a published
 Tibetan cultural-area map by extracting that map's outline and fitting the two
