@@ -1,8 +1,6 @@
 # Great Tibet Map
 
-**An interactive map of Ü-Tsang, Kham and Amdo — the three regions of Tibet.**
-
-ཆོལ་ཁ་གསུམ་ · *chöl-kha-sum*, "the three regions of Great Tibet": the way Tibetans have long
+**An interactive map of Ü-Tsang, Kham and Amdo — the three regions of Tibet.** ཆོལ་ཁ་གསུམ་ · *chöl-kha-sum*, "the three regions of Great Tibet": the way Tibetans have long
 described their own country. Click a region and the panel tells you its Tibetan
 name, its dialect, its landscape, its principal towns, its area as drawn, and
 the present-day units it now falls under.
