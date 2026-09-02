@@ -234,7 +234,7 @@ Dual-licensed, because this is part software and part cartographic work:
 In short: use it anywhere, commercially included. If you reuse the map or the
 writing, credit the project:
 
-> Great Tibet Map by Zorawae Bhum, CC BY 4.0 —
+> Great Tibet Map by Nammmkha, CC BY 4.0 —
 > https://github.com/Nammkha/Great-Tibet-Map
 
 The Google Fonts families are not part of this repository and carry their own
