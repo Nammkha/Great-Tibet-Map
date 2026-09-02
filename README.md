@@ -10,7 +10,7 @@ the present-day units it now falls under.
 [![Dependencies: none](https://img.shields.io/badge/dependencies-none-brightgreen.svg)](#requirements)
 [![Build step: none](https://img.shields.io/badge/build%20step-none-brightgreen.svg)](#try-it)
 
-**Live demo → <https://nammkha.github.io/Great-Tibet-Map/>**
+**Live demo → <https://zorawae.github.io/Great-Tibet-Map/>**
 
 The whole thing is one self-contained HTML file. No framework, no build step,
 no `npm install`, no tracking, nothing to configure before it works. Drop it on
@@ -34,13 +34,13 @@ a server, or paste a single block into a page you already have.
 
 ## Try it
 
-Open <https://nammkha.github.io/Great-Tibet-Map/> — that is the map, hosted.
+Open <https://zorawae.github.io/Great-Tibet-Map/> — that is the map, hosted.
 
 To run it yourself, clone the repository and open `tibet-three-regions-map.html`
 in any browser. Nothing to install, no server to start.
 
 ```sh
-git clone https://github.com/Nammkha/Great-Tibet-Map.git
+git clone https://github.com/Zorawae/Great-Tibet-Map.git
 cd Great-Tibet-Map
 open tibet-three-regions-map.html      # macOS; xdg-open on Linux, start on Windows
 ```
@@ -235,7 +235,7 @@ In short: use it anywhere, commercially included. If you reuse the map or the
 writing, credit the project:
 
 > Great Tibet Map by Zorawae, CC BY 4.0 —
-> https://github.com/Nammkha/Great-Tibet-Map
+> https://github.com/Zorawae/Great-Tibet-Map
 
 The Google Fonts families are not part of this repository and carry their own
 SIL Open Font License.
