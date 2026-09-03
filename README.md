@@ -102,6 +102,9 @@ render as empty boxes. The interactive version shows both.
 - **Bilingual labels** — English, Tibetan, or both.
 - **Current borders overlay** — put today's TAR and provincial boundaries over
   the cultural regions to compare the two.
+- **Rivers and ranges** — the eight great rivers that rise on the plateau, the
+  main lakes, ten mountain ranges and four peaks. Off by default; the regions
+  come first and the physical layer is context you opt into.
 - **Towns, world locator inset and dark/light themes**, each toggleable.
 - **A proportional bar** across the top, sized by each region's share of the
   total area.
@@ -122,6 +125,8 @@ Set these on the container div. They can also be changed at runtime.
      data-admin="false"       <!-- true shows current provincial borders -->
      data-cities="true"       <!-- true | false -->
      data-inset="true"        <!-- world locator box -->
+     data-rivers="false"      <!-- true draws the rivers and lakes -->
+     data-ranges="false"      <!-- true draws the ranges and peaks -->
      data-selected="kham">    <!-- utsang | kham | amdo | "" -->
 </div>
 ```

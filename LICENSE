@@ -66,3 +66,11 @@ part of this repository and carry their own licenses:
 
   Noto Serif Tibetan, IBM Plex Sans, Fraunces — SIL Open Font License 1.1
   https://openfontlicense.org/
+
+The rivers and lakes were derived from Natural Earth, which places its data in
+the public domain and asks for no attribution. It is credited here because
+knowing where a map's geometry came from is useful, not because anything is
+owed:
+
+  Natural Earth — https://www.naturalearthdata.com/
+  ne_10m_rivers_lake_centerlines, ne_10m_lakes
