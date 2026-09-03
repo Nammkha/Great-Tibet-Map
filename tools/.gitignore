@@ -1,2 +1,5 @@
 # Natural Earth source data: several MB, fetched on demand (see README.md)
 *.geojson
+__pycache__/
+placement.json
+measured.json
