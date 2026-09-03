@@ -1,1 +1,2 @@
-tools/*.geojson
+# Natural Earth source data: several MB, fetched on demand (see README.md)
+*.geojson
