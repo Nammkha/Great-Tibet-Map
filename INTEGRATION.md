@@ -89,6 +89,8 @@ Set these on the container div. They can also be changed at runtime.
      data-admin="false"       <!-- true shows current provincial borders -->
      data-cities="true"       <!-- true | false -->
      data-inset="true"        <!-- world locator box, bottom-left of the map -->
+     data-rivers="false"      <!-- true draws the rivers, lakes and their names -->
+     data-ranges="false"      <!-- true draws the range crests, peaks and names -->
      data-selected="kham">    <!-- utsang | kham | amdo | "" -->
 </div>
 ```
