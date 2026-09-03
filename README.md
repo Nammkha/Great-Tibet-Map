@@ -6,7 +6,7 @@ name, its dialect, its landscape, its principal towns, its area as drawn, and
 the present-day units it now falls under.
 
 [![Code: MIT](https://img.shields.io/badge/code-MIT-blue.svg)](LICENSE)
-[![Map & text: CC BY 4.0](https://img.shields.io/badge/map%20%26%20text-CC%20BY%204.0-green.svg)](LICENSE)
+[![Map & text: CC0 1.0](https://img.shields.io/badge/map%20%26%20text-CC0%201.0-green.svg)](LICENSE)
 [![Dependencies: none](https://img.shields.io/badge/dependencies-none-brightgreen.svg)](#requirements)
 [![Build step: none](https://img.shields.io/badge/build%20step-none-brightgreen.svg)](#try-it)
 
@@ -58,7 +58,7 @@ to build.
 | `tibet-three-regions-light.svg` | Static map, light. |
 | `index.html` | The project's landing page, served by GitHub Pages. |
 | `INTEGRATION.md` | Full integration, theming and API reference. |
-| `LICENSE` | MIT for the code, CC BY 4.0 for the map and text. |
+| `LICENSE` | MIT for the code, CC0 1.0 for the map and text. |
 | `og-image.png`, `sitemap.xml` | Social-share card and sitemap for the hosted site. |
 
 **Option 1 — iframe.** Fully isolated from your CSS; you only have to pick a
@@ -223,18 +223,18 @@ one file: that constraint is the point of the project.
 
 ## License
 
-Dual-licensed, because this is part software and part cartographic work:
+Two sets of terms, because this is part software and part cartographic work:
 
 - **Code** — the widget's HTML, CSS and JavaScript — under the
   [MIT License](LICENSE).
 - **Map and text** — the boundary geometry, the two static SVGs, the region
-  descriptions and the documentation prose — under
-  [CC BY 4.0](https://creativecommons.org/licenses/by/4.0/).
+  descriptions and the documentation prose — dedicated to the public domain
+  under [CC0 1.0](https://creativecommons.org/publicdomain/zero/1.0/).
 
-In short: use it anywhere, commercially included. If you reuse the map or the
-writing, credit the project:
+In short: use it anywhere, commercially included. The map and the writing carry
+no attribution requirement at all. Credit is welcome but not owed:
 
-> Great Tibet Map by Zorawae, CC BY 4.0 —
+> Great Tibet Map by Zorawae, CC0 1.0 —
 > [https://github.com/Zorawae/Great-Tibet-Map](https://zorawae.github.io/Great-Tibet-Map/)
 
 The Google Fonts families are not part of this repository and carry their own

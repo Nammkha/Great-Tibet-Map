@@ -1,5 +1,5 @@
-Great Tibet Map is released under two licenses, because it is part software and
-part cartographic and editorial work.
+Great Tibet Map is released under two sets of terms, because it is part
+software and part cartographic and editorial work.
 
 ────────────────────────────────────────────────────────────────────────────
 1. SOFTWARE — MIT License
@@ -32,7 +32,7 @@ OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
 SOFTWARE.
 
 ────────────────────────────────────────────────────────────────────────────
-2. MAP AND TEXT — Creative Commons Attribution 4.0 International (CC BY 4.0)
+2. MAP AND TEXT — CC0 1.0 Universal (Public Domain Dedication)
 ────────────────────────────────────────────────────────────────────────────
 
 Applies to the map itself and the words written about it: the region and
@@ -41,19 +41,20 @@ administrative overlay, the coastline and locator inset), the two static SVG
 maps, the region descriptions, facts and notes in the widget's panel, and the
 prose in README.md and INTEGRATION.md.
 
-Copyright (c) 2026 Zorawae
+To the extent possible under law, Zorawae has waived all copyright and
+related or neighbouring rights to this material and dedicated it to the
+public domain worldwide.
 
-Licensed under the Creative Commons Attribution 4.0 International License.
-You may share and adapt this material for any purpose, including commercially,
-provided you give appropriate credit, link to the license, and indicate if
-changes were made.
+You may copy, modify, distribute and use it, including for commercial
+purposes, all without asking permission and without any obligation to give
+credit. The material is offered as-is, with no warranties of any kind.
 
-License text: https://creativecommons.org/licenses/by/4.0/legalcode
-Summary:      https://creativecommons.org/licenses/by/4.0/
+Dedication text: https://creativecommons.org/publicdomain/zero/1.0/legalcode
+Summary:         https://creativecommons.org/publicdomain/zero/1.0/
 
-Suggested attribution:
+Credit is not required. If you would like to give it anyway:
 
-    Great Tibet Map by Zorawae, CC BY 4.0
+    Great Tibet Map by Zorawae, CC0 1.0
     https://github.com/Zorawae/Great-Tibet-Map
 
 ────────────────────────────────────────────────────────────────────────────
