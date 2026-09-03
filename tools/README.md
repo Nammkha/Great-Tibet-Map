@@ -25,3 +25,23 @@ The output is spliced into `var DATA = {...}` in `tibet-three-regions-map.html`.
 Range crests and peaks are listed in the script itself rather than taken from
 Natural Earth, which ships no range centrelines; they carry the labels and are
 not a claim about exact extent.
+
+## Where the range names sit
+
+Each range carries two numbers: how far along its crest the name sits, and how
+far the name is pushed off the crest. They are searched rather than hand-picked,
+because eleven names competing with the towns, the region titles and the river
+names is not something to eyeball:
+
+    python3 tools/measure-labels.py    # true label sizes + obstacles, in SVG units
+    python3 tools/place-labels.py      # searches each crest, writes placement.json
+
+Labels are rotated, so the search compares them as oriented rectangles. Using
+their axis-aligned bounds instead rejects placements that are actually clear --
+a 124-unit name at 28 degrees has a bounding box roughly five times its own
+footprint.
+
+The six gang are divisions of Kham, so the search also prefers to keep their
+names inside the Kham polygon. Mardza gang is the exception it cannot satisfy:
+its crest runs under the "Kham" title with no clear ground at that latitude, so
+its name sits just north, on the Amdo side of a line it genuinely borders.

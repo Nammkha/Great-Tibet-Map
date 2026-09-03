@@ -158,14 +158,14 @@ def to_path(runs, closed=False):
 # Natural Earth splits each great river into locally-named segments; these are
 # the segment names that make up one continuous course, upstream first.
 RIVERS = [
-    ('Yarlung Tsangpo', 'Brahmaputra',  ['Maquan', 'Yarlung', 'Dihang', 'Brahmaputra'], 1),
-    ('Ma Chu',          'Yellow River', ['Huang'],                                      1),
-    ('Dri Chu',         'Yangtze',      ['Tuotuo', 'Tongtian', 'Jinsha', 'Chang Jiang'],1),
-    ('Za Chu',          'Mekong',       ['Za', 'Lancang', 'Mekong'],                    1),
-    ('Ngul Chu',        'Salween',      ['Nu', 'Salween'],                              1),
-    ('Sengge Khabab',   'Indus',        ['Shiquan', 'Indus'],                           1),
-    ('Langchen Khabab', 'Sutlej',       ['Sutlej'],                                     0),
-    ('Macha Khabab',    'Karnali',      ['Ghaghara', 'Ghäghara'],                  0),
+    ('Yarlung Tsangpo', 'Brahmaputra',  ['Maquan', 'Yarlung', 'Dihang', 'Brahmaputra'], 1, 0.45),
+    ('Ma Chu',          'Yellow River', ['Huang'],                                      1, 0.62),
+    ('Dri Chu',         'Yangtze',      ['Tuotuo', 'Tongtian', 'Jinsha', 'Chang Jiang'],1, 0.45),
+    ('Za Chu',          'Mekong',       ['Za', 'Lancang', 'Mekong'],                    1, 0.62),
+    ('Ngul Chu',        'Salween',      ['Nu', 'Salween'],                              1, 0.34),
+    ('Sengge Khabab',   'Indus',        ['Shiquan', 'Indus'],                           1, 0.25),
+    ('Langchen Khabab', 'Sutlej',       ['Sutlej'],                                     0, 0.45),
+    ('Macha Khabab',    'Karnali',      ['Ghaghara', 'Ghäghara'],                  0, 0.45),
 ]
 
 LAKES = [
@@ -176,30 +176,42 @@ LAKES = [
     ('Mapham Yutso', 'Manasarovar',  'Mapam Yumco'),
 ]
 
-# Range spines, west to east (or north to south).  Natural Earth ships no range
+# Range spines, west to east (or north to south).  The number after the name is
+# how far along the spine the label sits, and the next is how far it is pushed
+# off the crest, perpendicular to it.  Both are chosen by tools/place-labels.py,
+# which tests the rotated name against the towns, the region titles and the
+# other names; they are not hand-picked.  Natural Earth ships no range
 # centrelines, so these are drawn by hand from the ranges' mapped crests -- they
 # carry the label, they are not a claim about exact extent.
 RANGES = [
-    ('Himalaya', 0.45, [(74.8,35.2),(76.0,34.0),(77.5,32.8),(79.0,31.6),(80.5,30.8),(82.0,30.2),
+    # The six gang of Kham -- the ridges of "Chushi Gangdruk", four rivers and
+    # six ranges -- then the ranges that wall the plateau.  No dataset carries
+    # the gang, so these six spines are placed from where each gang sits between
+    # its rivers; they carry the name and are the part of this file most in need
+    # of a Khampa eye.
+    ('Duldza Zalmo gang', 0.04, -34, [(95.8,33.3),(96.7,32.9),(97.6,32.5),(98.4,32.1)]),
+    ('Mardza gang',       0.68, -34, [(98.4,32.9),(99.1,32.6),(99.8,32.4),(100.4,32.1)]),
+    ('Pobar gang',        0.54, -10, [(94.4,30.3),(95.3,30.0),(96.2,29.9),(97.0,30.0)]),
+    ('Tshawa gang',       0.52, 8, [(97.4,30.5),(97.9,29.7),(98.3,28.9),(98.6,28.1)]),
+    ('Markham gang',      0.60, 8, [(98.7,30.6),(99.1,29.8),(99.4,29.0),(99.7,28.2)]),
+    ('Minya gang',        0.50, 8, [(100.6,30.8),(101.2,30.3),(101.7,29.7),(102.1,29.1)]),
+
+    ('Himalaya', 0.50, -10, [(74.8,35.2),(76.0,34.0),(77.5,32.8),(79.0,31.6),(80.5,30.8),(82.0,30.2),
                   (84.0,29.5),(86.0,28.6),(87.5,28.1),(89.0,27.9),(90.5,28.0),(92.0,28.3),
                   (93.5,28.8),(95.0,29.3),(95.8,29.6)]),
-    ('Karakoram', 0.45, [(74.8,36.0),(75.8,35.9),(76.8,35.7),(77.8,35.5),(78.6,35.2)]),
-    ('Kunlun', 0.45, [(76.0,36.4),(78.0,36.2),(80.5,35.9),(83.0,35.7),(85.5,35.9),(88.0,36.2),
+    ('Karakoram', 0.50, -10, [(74.8,36.0),(75.8,35.9),(76.8,35.7),(77.8,35.5),(78.6,35.2)]),
+    ('Kunlun', 0.50, -10, [(76.0,36.4),(78.0,36.2),(80.5,35.9),(83.0,35.7),(85.5,35.9),(88.0,36.2),
                 (90.5,36.5),(93.0,36.4),(95.5,36.1),(97.5,35.8)]),
-    ('Gangdise', 0.45, [(80.5,31.4),(82.5,31.2),(84.5,31.0),(86.5,30.8),(88.5,30.6),(90.0,30.5)]),
-    ('Nyenchen Tanglha', 0.78, [(90.0,30.4),(91.5,30.3),(93.0,30.4),(94.3,30.0),(95.2,29.8)]),
-    ('Tanggula', 0.22, [(89.5,33.4),(91.5,33.2),(93.5,32.9),(95.5,32.6),(97.0,32.3)]),
-    ('Bayan Har', 0.18, [(96.0,34.7),(97.5,34.5),(99.0,34.3),(100.5,34.1)]),
-    ('Amnye Machen', 0.15, [(98.9,35.0),(99.5,34.8),(100.1,34.6)]),
-    ('Qilian', 0.45, [(94.5,38.9),(96.5,38.7),(98.5,38.2),(100.5,37.6),(102.0,37.0)]),
-    ('Hengduan', 0.72, [(98.6,31.5),(98.9,30.0),(99.2,28.5),(99.6,27.2)]),
+    ('Gangdise', 0.50, 8, [(80.5,31.4),(82.5,31.2),(84.5,31.0),(86.5,30.8),(88.5,30.6),(90.0,30.5)]),
+    ('Nyenchen Tanglha', 0.50, -10, [(90.0,30.4),(91.5,30.3),(93.0,30.4),(94.3,30.0),(95.2,29.8)]),
 ]
 
-PEAKS = [
-    ('Chomolungma', 'Everest',      86.925, 27.988),
-    ('Gang Rinpoche', 'Kailash',    81.312, 31.067),
-    ('Namcha Barwa', 'Namcha Barwa',95.055, 29.628),
-    ('Amnye Machen', 'Amnye Machen',99.478, 34.828),
+
+PEAKS = [                                     # last field: label below (1) or above (-1)
+    ('Chomolungma', 'Everest',      86.925, 27.988,  1),
+    ('Gang Rinpoche', 'Kailash',    81.312, 31.067,  1),
+    ('Namcha Barwa', 'Namcha Barwa',95.055, 29.628,  1),
+    ('Amnye Machen', 'Amnye Machen',99.478, 34.828, -1),
 ]
 
 BOX = (-40.0, -40.0, 1220.0, 785.0)      # viewBox plus a little slack
@@ -222,7 +234,7 @@ def main():
 
     out = {'rivers': [], 'lakes': [], 'ranges': [], 'peaks': []}
 
-    for bo, en, names, main_stem in RIVERS:
+    for bo, en, names, main_stem, frac in RIVERS:
         runs = []
         for feat in rivers_src['features']:
             if feat['properties'].get('name') not in names:
@@ -235,7 +247,7 @@ def main():
                     runs.append(simplify(run, TOL_RIVER))
         if runs:
             out['rivers'].append({'bo': bo, 'en': en, 'main': main_stem,
-                                  'd': to_path(runs), 'lab': label_anchor(runs)})
+                                  'd': to_path(runs), 'lab': label_anchor(runs, frac)})
 
     for bo, en, ne_name in LAKES:
         runs = []
@@ -250,14 +262,15 @@ def main():
         if runs:
             out['lakes'].append({'bo': bo, 'en': en, 'd': to_path(runs, closed=True)})
 
-    for name, frac, spine in RANGES:
+    for name, frac, dy, spine in RANGES:
         pts = simplify([project(lo, la) for lo, la in spine], TOL_RANGE)
-        out['ranges'].append({'en': name, 'd': to_path([pts]),
+        out['ranges'].append({'en': name, 'd': to_path([pts]), 'dy': dy,
                               'lab': label_anchor([pts], frac)})
 
-    for bo, en, lon, lat in PEAKS:
+    for bo, en, lon, lat, side in PEAKS:
         x, y = project(lon, lat)
-        out['peaks'].append({'bo': bo, 'en': en, 'p': [round(x, 1), round(y, 1)]})
+        out['peaks'].append({'bo': bo, 'en': en, 'p': [round(x, 1), round(y, 1)],
+                             'side': side})
 
     json.dump(out, sys.stdout, ensure_ascii=False, separators=(',', ':'))
     sys.stderr.write('rivers %d  lakes %d  ranges %d  peaks %d\n'
