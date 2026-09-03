@@ -102,11 +102,12 @@ render as empty boxes. The interactive version shows both.
 - **Bilingual labels** — English, Tibetan, or both.
 - **Current borders overlay** — put today's TAR and provincial boundaries over
   the cultural regions to compare the two.
-- **Rivers and ranges** — the eight great rivers that rise on the plateau and
-  five of its lakes; the six gang of Kham, from *Chushi Gangdruk*, with the
-  Himalaya, Karakoram, Kunlun, Gangdise and Nyenchen Tanglha; and four peaks.
-  Off by default; the regions come first and the physical layer is context you
-  opt into.
+- **Rivers and ranges** — the great rivers that rise on the plateau and five of
+  its lakes; the six gang of Kham, from *Chushi Gangdruk*, with the Himalaya,
+  Kunlun, Gangdise and Nyenchen Tanglha; and four peaks. Named in Tibetan, and
+  in Latin letters, following the same Labels toggle as the towns. Drawn only
+  where they run through the three regions. Off by default; the regions come
+  first and the physical layer is context you opt into.
 - **Towns, world locator inset and dark/light themes**, each toggleable.
 - **A proportional bar** across the top, sized by each region's share of the
   total area.

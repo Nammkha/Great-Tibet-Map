@@ -139,11 +139,69 @@ def label_anchor(runs, frac=0.45, core=(120.0, 60.0, 1060.0, 700.0)):
                 ang -= 180
             if ang < -90:
                 ang += 180
+            # A name set along a steep crest is barely readable -- the gang of
+            # Kham run nearly north-south and were coming out at 70-80 degrees.
+            # Lean it towards the crest without following it all the way.
+            ang = max(-MAX_TILT, min(MAX_TILT, ang))
             return {'p': [round(a[0] + t * (b[0] - a[0]), 1),
                           round(a[1] + t * (b[1] - a[1]), 1)],
                     'a': round(ang, 1)}
         acc += d
     return None
+
+
+def rings_of(dstr):
+    out = []
+    for sub in dstr.split('M')[1:]:
+        v = [float(t) for t in re.findall(r'-?\d+\.?\d*', sub)]
+        out.append(list(zip(v[0::2], v[1::2])))
+    return out
+
+
+def inside(rings, x, y):
+    hit = False
+    for ring in rings:
+        for i in range(len(ring)):
+            x1, y1 = ring[i]; x2, y2 = ring[(i + 1) % len(ring)]
+            if (y1 > y) != (y2 > y) and x < x1 + (y - y1) / (y2 - y1) * (x2 - x1):
+                hit = not hit
+    return hit
+
+
+def near_edge(rings, x, y, tol=7.0):
+    """Inside, or within tol of the boundary.  Chomolungma stands on the
+    Tibet-Nepal line and a strict inside-test drops it."""
+    if inside(rings, x, y):
+        return True
+    for ring in rings:
+        for i in range(len(ring)):
+            ax_, ay_ = ring[i]; bx_, by_ = ring[(i + 1) % len(ring)]
+            vx, vy = bx_ - ax_, by_ - ay_
+            L = vx * vx + vy * vy
+            t = 0.0 if L == 0 else max(0.0, min(1.0, ((x - ax_) * vx + (y - ay_) * vy) / L))
+            if math.hypot(ax_ + t * vx - x, ay_ + t * vy - y) <= tol:
+                return True
+    return False
+
+
+def clip_to_tibet(runs, tibet):
+    """Keep only the parts of each run that fall inside Tibet.  The map is about
+    the three regions, so a river is drawn where it runs through them and not
+    across the whole frame; the render also clips to the same outline, which
+    tidies the cut ends this leaves at vertex granularity."""
+    out = []
+    for run in runs:
+        cur = []
+        for i, p in enumerate(run):
+            if inside(tibet, p[0], p[1]):
+                if not cur and i:
+                    cur.append(run[i - 1])
+                cur.append(p)
+            elif cur:
+                cur.append(p); out.append(cur); cur = []
+        if len(cur) > 1:
+            out.append(cur)
+    return [r for r in out if len(r) > 1]
 
 
 def to_path(runs, closed=False):
@@ -157,15 +215,24 @@ def to_path(runs, closed=False):
 
 # Natural Earth splits each great river into locally-named segments; these are
 # the segment names that make up one continuous course, upstream first.
+# name in Tibetan script, name in Latin letters, the Natural Earth segments that
+# make up the course, whether it draws as a main stem, where the label sits.
+# Both names come from the author's list; the international names the segments
+# carry (Brahmaputra, Mekong, Yangtze ...) are not shown on the map.  The last
+# two numbers are where the label sits along the course and how far off it.
 RIVERS = [
-    ('Yarlung Tsangpo', 'Brahmaputra',  ['Maquan', 'Yarlung', 'Dihang', 'Brahmaputra'], 1, 0.45),
-    ('Ma Chu',          'Yellow River', ['Huang'],                                      1, 0.62),
-    ('Dri Chu',         'Yangtze',      ['Tuotuo', 'Tongtian', 'Jinsha', 'Chang Jiang'],1, 0.45),
-    ('Za Chu',          'Mekong',       ['Za', 'Lancang', 'Mekong'],                    1, 0.62),
-    ('Ngul Chu',        'Salween',      ['Nu', 'Salween'],                              1, 0.34),
-    ('Sengge Khabab',   'Indus',        ['Shiquan', 'Indus'],                           1, 0.25),
-    ('Langchen Khabab', 'Sutlej',       ['Sutlej'],                                     0, 0.45),
-    ('Macha Khabab',    'Karnali',      ['Ghaghara', 'Ghäghara'],                  0, 0.45),
+    ('ཡར་ཀླུང་གཙང་པོ་', 'Yarlung Tsangpo', ['Maquan', 'Yarlung', 'Dihang', 'Brahmaputra'], 1, 0.82, 17),
+    ('རྨ་ཆུ་',           'Ma Chu',          ['Huang'],                                     1, 0.48, 8),
+    ('འབྲི་ཆུ་',          'Drichu',          ['Tuotuo', 'Tongtian', 'Jinsha', 'Chang Jiang'],1, 0.08, 8),
+    ('རྫ་ཆུ་',           'Za Qu',           ['Za', 'Lancang', 'Mekong'],                   1, 0.96, 11),
+    ('རྒྱ་མོ་རྔུལ་ཆུ་',    'Gyalmo Ngulchu',  ['Nu', 'Salween'],                             1, 0.52, -7),
+    ('སེང་གེ་ཁ་འབབ་',    'Sangge Khabab',   ['Shiquan', 'Indus'],                          1, 0.92, -16),
+    ('གླང་ཆེན་ཁ་འབབ་',   'Langchen Khabab', ['Sutlej'],                                    0, 0.82, 8),
+    # Macha Khabab is left out: Natural Earth's Ghaghara segment begins at the
+    # border, so only about 15 px of it falls inside Tibet -- too little to read
+    # as a river, while its name crowded the corner where the Sengge and Langchen
+    # Khabab and Gang Rinpoche already compete. Add it back if a source with the
+    # Tibetan headwater turns up.
 ]
 
 LAKES = [
@@ -189,32 +256,35 @@ RANGES = [
     # the gang, so these six spines are placed from where each gang sits between
     # its rivers; they carry the name and are the part of this file most in need
     # of a Khampa eye.
-    ('Duldza Zalmo gang', 0.04, -34, [(95.8,33.3),(96.7,32.9),(97.6,32.5),(98.4,32.1)]),
-    ('Mardza gang',       0.68, -34, [(98.4,32.9),(99.1,32.6),(99.8,32.4),(100.4,32.1)]),
-    ('Pobar gang',        0.54, -10, [(94.4,30.3),(95.3,30.0),(96.2,29.9),(97.0,30.0)]),
-    ('Tshawa gang',       0.52, 8, [(97.4,30.5),(97.9,29.7),(98.3,28.9),(98.6,28.1)]),
-    ('Markham gang',      0.60, 8, [(98.7,30.6),(99.1,29.8),(99.4,29.0),(99.7,28.2)]),
-    ('Minya gang',        0.50, 8, [(100.6,30.8),(101.2,30.3),(101.7,29.7),(102.1,29.1)]),
+    ('', 'Duldza Zalmo gang', 0.04, -34, [(95.8,33.3),(96.7,32.9),(97.6,32.5),(98.4,32.1)]),
+    ('', 'Mardza gang',       0.68, -34, [(98.4,32.9),(99.1,32.6),(99.8,32.4),(100.4,32.1)]),
+    ('', 'Pobar gang',        0.70, -10, [(94.4,30.3),(95.3,30.0),(96.2,29.9),(97.0,30.0)]),
+    ('', 'Tshawa gang',       0.50, 8, [(97.4,30.5),(97.9,29.7),(98.3,28.9),(98.6,28.1)]),
+    ('', 'Markham gang',      0.50, 8, [(98.7,30.6),(99.1,29.8),(99.4,29.0),(99.7,28.2)]),
+    ('', 'Minya gang',        0.72, 8, [(100.6,30.8),(101.2,30.3),(101.7,29.7),(102.1,29.1)]),
 
-    ('Himalaya', 0.50, -10, [(74.8,35.2),(76.0,34.0),(77.5,32.8),(79.0,31.6),(80.5,30.8),(82.0,30.2),
+    ('', 'Himalaya', 0.50, 8, [(74.8,35.2),(76.0,34.0),(77.5,32.8),(79.0,31.6),(80.5,30.8),(82.0,30.2),
                   (84.0,29.5),(86.0,28.6),(87.5,28.1),(89.0,27.9),(90.5,28.0),(92.0,28.3),
                   (93.5,28.8),(95.0,29.3),(95.8,29.6)]),
-    ('Karakoram', 0.50, -10, [(74.8,36.0),(75.8,35.9),(76.8,35.7),(77.8,35.5),(78.6,35.2)]),
-    ('Kunlun', 0.50, -10, [(76.0,36.4),(78.0,36.2),(80.5,35.9),(83.0,35.7),(85.5,35.9),(88.0,36.2),
+    ('', 'Karakoram', 0.50, -10, [(74.8,36.0),(75.8,35.9),(76.8,35.7),(77.8,35.5),(78.6,35.2)]),
+    ('ཁུ་ནུ་རི་རྒྱུད་', 'Kunlun', 0.50, -10, [(76.0,36.4),(78.0,36.2),(80.5,35.9),(83.0,35.7),(85.5,35.9),(88.0,36.2),
                 (90.5,36.5),(93.0,36.4),(95.5,36.1),(97.5,35.8)]),
-    ('Gangdise', 0.50, 8, [(80.5,31.4),(82.5,31.2),(84.5,31.0),(86.5,30.8),(88.5,30.6),(90.0,30.5)]),
-    ('Nyenchen Tanglha', 0.50, -10, [(90.0,30.4),(91.5,30.3),(93.0,30.4),(94.3,30.0),(95.2,29.8)]),
+    ('གངས་ཏི་སེ་', 'Gangdise', 0.50, 8, [(80.5,31.4),(82.5,31.2),(84.5,31.0),(86.5,30.8),(88.5,30.6),(90.0,30.5)]),
+    ('གཉན་ཆེན་ཐང་ལྷ་', 'Nyenchen Tanglha', 0.50, -10, [(90.0,30.4),(91.5,30.3),(93.0,30.4),(94.3,30.0),(95.2,29.8)]),
 ]
 
 
+# Namcha Barwa and Amnye Machen are not on the author's list, so they carry the
+# Latin name only and are marked as having no Tibetan yet.
 PEAKS = [                                     # last field: label below (1) or above (-1)
-    ('Chomolungma', 'Everest',      86.925, 27.988,  1),
-    ('Gang Rinpoche', 'Kailash',    81.312, 31.067,  1),
-    ('Namcha Barwa', 'Namcha Barwa',95.055, 29.628,  1),
-    ('Amnye Machen', 'Amnye Machen',99.478, 34.828, -1),
+    ('ཇོ་མོ་གླང་མ་',   'Chomo lungma', 86.925, 27.988, -1),
+    ('གངས་རིན་པོ་ཆེ་', 'Gang Rinpoche',81.312, 31.067,  1),
+    ('',              'Namcha Barwa', 95.055, 29.628,  1),
+    ('',              'Amnye Machen', 99.478, 34.828, -1),
 ]
 
 BOX = (-40.0, -40.0, 1220.0, 785.0)      # viewBox plus a little slack
+MAX_TILT = 34.0                          # degrees; steeper names stop reading
 TOL_RIVER, TOL_LAKE, TOL_RANGE = 0.8, 0.4, 0.5
 
 
@@ -229,12 +299,14 @@ def main():
         x, y = _lcc(lon, lat, p1, p2, lon0)
         return ax * x + bx, ay * y + by
 
+    tibet = rings_of(data['outline'])
+
     rivers_src = json.load(open(os.path.join(HERE, 'ne_10m_rivers_lake_centerlines.geojson')))
     lakes_src = json.load(open(os.path.join(HERE, 'ne_10m_lakes.geojson')))
 
     out = {'rivers': [], 'lakes': [], 'ranges': [], 'peaks': []}
 
-    for bo, en, names, main_stem, frac in RIVERS:
+    for bo, en, names, main_stem, frac, dy in RIVERS:
         runs = []
         for feat in rivers_src['features']:
             if feat['properties'].get('name') not in names:
@@ -243,10 +315,10 @@ def main():
             parts = [geom['coordinates']] if geom['type'] == 'LineString' else geom['coordinates']
             for part in parts:
                 pts = [project(lo, la) for lo, la in part]
-                for run in clip_runs(pts, BOX):
+                for run in clip_to_tibet(clip_runs(pts, BOX), tibet):
                     runs.append(simplify(run, TOL_RIVER))
         if runs:
-            out['rivers'].append({'bo': bo, 'en': en, 'main': main_stem,
+            out['rivers'].append({'bo': bo, 'en': en, 'main': main_stem, 'dy': dy,
                                   'd': to_path(runs), 'lab': label_anchor(runs, frac)})
 
     for bo, en, ne_name in LAKES:
@@ -258,17 +330,24 @@ def main():
             polys = [geom['coordinates']] if geom['type'] == 'Polygon' else geom['coordinates']
             for poly in polys:
                 pts = [project(lo, la) for lo, la in poly[0]]
+                if not any(inside(tibet, x, y) for x, y in pts):
+                    continue
                 runs.append(simplify(pts, TOL_LAKE))
         if runs:
             out['lakes'].append({'bo': bo, 'en': en, 'd': to_path(runs, closed=True)})
 
-    for name, frac, dy, spine in RANGES:
+    for bo, name, frac, dy, spine in RANGES:
         pts = simplify([project(lo, la) for lo, la in spine], TOL_RANGE)
-        out['ranges'].append({'en': name, 'd': to_path([pts]), 'dy': dy,
-                              'lab': label_anchor([pts], frac)})
+        runs = clip_to_tibet([pts], tibet)
+        if not runs:
+            continue
+        out['ranges'].append({'bo': bo, 'en': name, 'd': to_path(runs), 'dy': dy,
+                              'lab': label_anchor(runs, frac)})
 
     for bo, en, lon, lat, side in PEAKS:
         x, y = project(lon, lat)
+        if not near_edge(tibet, x, y):
+            continue
         out['peaks'].append({'bo': bo, 'en': en, 'p': [round(x, 1), round(y, 1)],
                              'side': side})
 
