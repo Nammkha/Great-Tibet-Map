@@ -175,10 +175,17 @@ shapes actually shown, not numbers quoted from elsewhere:
 
 | Region | Area as drawn | Share |
 |---|---:|---:|
-| Ü-Tsang | 1,073,363 km² | 49.3% |
-| Kham | 542,279 km² | 24.9% |
-| Amdo | 563,220 km² | 25.8% |
-| **Combined** | **2,178,862 km²** | |
+| Ü-Tsang | 1,224,104 km² | 52.5% |
+| Kham | 540,293 km² | 23.2% |
+| Amdo | 568,910 km² | 24.4% |
+| **Combined** | **2,333,307 km²** | |
+
+**The northern rim follows the Kunlun.** Between 80.4°E and 91.0°E the boundary
+had been drawn along the *southern* foot of the Kunlun, which put the whole
+range — Khunu Ri Gyu, the wall the plateau ends at — outside Tibet. It now runs
+along the range's northern edge, where the plateau drops into the Tarim, taken
+from Natural Earth and carried east onto the Altyn Tagh. See
+[INTEGRATION.md](INTEGRATION.md) for the detail.
 
 **These are traditional cultural regions of Great Tibet** Their
 historical limits were never surveyed, they shifted over time, and different

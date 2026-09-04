@@ -361,8 +361,8 @@ PEAK_RANGES = [
 # the water.  Pobar in the west and Minya in the east are not between a pair and
 # are anchored on their own high ground instead.
 GANG_BETWEEN = [
-    ('', 'Duldza Zalmo gang', 0.04, -16, 'Drichu',         'Za Qu',  (31.8, 33.6)),
-    ('', 'Mardza gang',          0.48, -2, 'Ma Chu',         'Drichu', (32.0, 33.4)),
+    ('', 'Duldza Zalmo gang', 0.04, -44, 'Drichu',         'Za Qu',  (31.8, 33.6)),
+    ('', 'Mardza gang',          0.84, -32, 'Ma Chu',         'Drichu', (32.0, 33.4)),
     ('', 'Tshawa gang',       0.70, 8, 'Gyalmo Ngulchu', 'Za Qu',  (28.2, 30.6)),
     ('', 'Markham gang',      0.48, 8, 'Za Qu',          'Drichu', (28.2, 30.6)),
 ]
