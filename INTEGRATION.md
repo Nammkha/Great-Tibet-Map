@@ -200,11 +200,24 @@ notches along that edge that no published cultural-area map draws. The northern
 boundary is therefore closed to follow the continuous landform. Everywhere else
 the outline is the prefecture mosaic as-is.
 
+Between 80.4°E and 91.0°E that landform is the Kunlun, which is where the
+plateau ends and the Tarim begins. The line first drawn there followed the
+range's *southern* foot — its vertices sat within 0.1° of the southern edge of
+Natural Earth's KUNLUN MOUNTAINS polygon — so the whole range lay outside
+Tibet. It now follows the same polygon's northern edge, carried east onto the
+Altyn Tagh (the southern edge of the TARIM BASIN polygon) until it meets the
+line the map already drew along the Tsaidam's northern wall. The Ladakh
+frontier is not moved; it is continued on its own bearing until it reaches the
+rim at 81.7°E. This added about 155,000 km² along that edge, almost all of it
+to Ü-Tsang, and brought Khunu Ri Gyu inside the map. Natural Earth is public
+domain, so nothing here encumbers the CC0 dedication.
+
 **Checked against a reference.** The silhouette was compared with a published
 Tibetan cultural-area map by extracting that map's outline and fitting the two
 together: they agree over 92.9% of their combined area. The residual differences
 are the fringe of a few tens of kilometres, plus Arunachal Pradesh, which lies
-outside this map by design.
+outside this map by design. That comparison was made before the northern rim
+was corrected, so it does not account for the strip described above.
 
-**Areas as drawn:** Ü-Tsang 1,073,363 km² · Kham 542,279 km² ·
-Amdo 563,220 km² · combined 2,178,862 km².
+**Areas as drawn:** Ü-Tsang 1,224,104 km² · Kham 540,293 km² ·
+Amdo 568,910 km² · combined 2,333,307 km².
