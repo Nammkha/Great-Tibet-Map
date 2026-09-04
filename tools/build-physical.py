@@ -362,7 +362,7 @@ PEAK_RANGES = [
 # are anchored on their own high ground instead.
 GANG_BETWEEN = [
     ('', 'Duldza Zalmo gang', 0.04, -16, 'Drichu',         'Za Qu',  (31.8, 33.6)),
-    ('', 'Mardza gang',       0.28, 11, 'Ma Chu',         'Drichu', (32.0, 33.4)),
+    ('', 'Mardza gang',          0.48, -2, 'Ma Chu',         'Drichu', (32.0, 33.4)),
     ('', 'Tshawa gang',       0.70, 8, 'Gyalmo Ngulchu', 'Za Qu',  (28.2, 30.6)),
     ('', 'Markham gang',      0.48, 8, 'Za Qu',          'Drichu', (28.2, 30.6)),
 ]
@@ -450,11 +450,18 @@ def main():
         # such as the Himalaya.  It must not also keep one that merely passes
         # nearby: the Karakoram has no point inside Tibet at all, and was drawing
         # a full-size name out in Kashmir attached to a 51 px stub.
-        if not any(inside(tibet, x, y) for r in runs for x, y in r):
-            sys.stderr.write('%s: no point inside Tibet, left out\n' % name)
-            continue
+        # A rim range is kept whole. Clipping deleted the western two thirds of
+        # Khunu Ri Gyu, whose crest runs along the plateau's northern wall just
+        # outside the outline this map draws, and left its name stranded in the
+        # north-centre. The full spine is carried as well as the clipped part;
+        # the render draws what falls outside Tibet faintly.
+        inside_any = any(inside(tibet, x, y) for r in runs for x, y in r)
+        if not inside_any:
+            sys.stderr.write('%s: outside the outline, drawn faint only\n' % name)
+            runs = []
         out['ranges'].append({'bo': bo, 'en': name, 'd': to_path(runs), 'dy': dy,
-                              'lab': label_anchor(runs, frac)})
+                              'dFull': to_path([pts]),
+                              'lab': label_anchor(runs or [pts], frac)})
 
     for bo, en, lon, lat, ldx, ldy in PEAKS:
         x, y = project(lon, lat)
