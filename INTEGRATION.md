@@ -91,6 +91,9 @@ Set these on the container div. They can also be changed at runtime.
      data-inset="true"        <!-- world locator box, bottom-left of the map -->
      data-rivers="false"      <!-- true draws the rivers, lakes and their names -->
      data-ranges="false"      <!-- true draws the range crests, peaks and names -->
+                              <!-- independent attributes, one button: Physical
+                                   cycles Off, Rivers, Ranges, Both. Set either
+                                   by hand and the button reports it -->
      data-selected="kham">    <!-- utsang | kham | amdo | "" -->
 </div>
 ```

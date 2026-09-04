@@ -272,7 +272,8 @@
   transition:color .2s,border-color .2s;
 }
 .tibmap__ctrl:hover{color:var(--tm-ink);border-color:var(--tm-hair);}
-.tibmap__ctrl[aria-pressed="true"]{color:var(--tm-gold);border-color:var(--tm-gold);}
+.tibmap__ctrl[aria-pressed="true"],
+.tibmap__ctrl[data-on="true"]{color:var(--tm-gold);border-color:var(--tm-gold);}
 .tibmap__ctrl:focus-visible{outline:2px solid var(--tm-gold);outline-offset:2px;}
 .tibmap__note{
   padding:0 28px 24px;margin:0;font-size:11.5px;line-height:1.65;
@@ -548,8 +549,7 @@
       '<button class="tibmap__ctrl" type="button" data-act="admin" aria-pressed="false">Current borders</button>'+
       '<button class="tibmap__ctrl" type="button" data-act="cities" aria-pressed="true">Towns</button>'+
       '<button class="tibmap__ctrl" type="button" data-act="inset" aria-pressed="true">Locator</button>'+'<button class="tibmap__ctrl" type="button" data-act="theme">Light</button>'+
-      '<button class="tibmap__ctrl" type="button" data-act="rivers" aria-pressed="false">Rivers</button>'+
-      '<button class="tibmap__ctrl" type="button" data-act="ranges" aria-pressed="false">Ranges</button>'+
+      '<button class="tibmap__ctrl" type="button" data-act="physical">Physical: Off</button>'+
     '</div>'+
   '</div>'+
   '<p class="tibmap__note">Historically Tibet was divided into three cultural regions called \u00dc-Tsang, Kham and Amdo. Each one of these three regions has developed its own distinct dialect of Tibetan. Most widely spoken is the Lhasa dialect, also called Standard Tibetan, which is spoken in Central Tibet and also in Exile by most Tibetans. In Kham the Khams Tibetan dialect is spoken and in Amdo the Amdo Tibetan dialect. The Tibetan dialects are subject to the Tibetic languages which are part of the Tibeto-Burman languages. Modern Tibetan derives from Classical Tibetan, which is the written norm, and from Old Tibetan. The official language of Bhutan, Dzongkha, is also closely related to Tibetan.</p>';
@@ -558,6 +558,27 @@
   var panel=root.querySelector('.tibmap__pbody');
   var listeners=[];
   var LABEL_MODES=['both','en','bo'], LABEL_TEXT={both:'Both',en:'English',bo:'Tibetan'};
+
+  /* Rivers and ranges are one cycling control, but they stay two independent
+     data attributes: data-rivers and data-ranges are the documented embedding
+     API, and CSS keys off them separately. The button reads its mode back out
+     of them, so a host that sets either attribute by hand still gets a button
+     that reports the truth. */
+  var PHYS_MODES=['off','rivers','ranges','both'],
+      PHYS_TEXT={off:'Off',rivers:'Rivers',ranges:'Ranges',both:'Both'};
+
+  function physMode(){
+    var r=root.getAttribute('data-rivers')==='true',
+        g=root.getAttribute('data-ranges')==='true';
+    return r&&g?'both':r?'rivers':g?'ranges':'off';
+  }
+  function setPhys(m){
+    root.setAttribute('data-rivers', m==='rivers'||m==='both');
+    root.setAttribute('data-ranges', m==='ranges'||m==='both');
+    var b=root.querySelector('[data-act="physical"]');
+    b.textContent='Physical: '+PHYS_TEXT[m];
+    b.setAttribute('data-on', m!=='off');
+  }
 
   function panelHTML(k){
     if(!k){
@@ -635,10 +656,7 @@
     var c=e.target.closest('[data-act]');
     if(!c) return;
     var a=c.getAttribute('data-act');
-    if(a==='rivers'){ var onr=root.getAttribute('data-rivers')!=='true';
-      root.setAttribute('data-rivers',onr); c.setAttribute('aria-pressed',onr); }
-    if(a==='ranges'){ var ong=root.getAttribute('data-ranges')!=='true';
-      root.setAttribute('data-ranges',ong); c.setAttribute('aria-pressed',ong); }
+    if(a==='physical'){ setPhys(PHYS_MODES[(PHYS_MODES.indexOf(physMode())+1)%PHYS_MODES.length]); }
     if(a==='admin'){ var on=root.getAttribute('data-admin')!=='true';
       root.setAttribute('data-admin',on); c.setAttribute('aria-pressed',on); }
     if(a==='cities'){ var on2=root.getAttribute('data-cities')!=='true';
@@ -685,6 +703,7 @@
   root.querySelector('[data-act="admin"]').setAttribute('aria-pressed',root.getAttribute('data-admin')==='true');
   root.querySelector('[data-act="cities"]').setAttribute('aria-pressed',root.getAttribute('data-cities')!=='false');
   root.querySelector('[data-act="labels"]').textContent='Labels: '+(LABEL_TEXT[root.getAttribute('data-labels')]||'Both');
+  setPhys(physMode());
   reservePanel();
   select(root.getAttribute('data-selected')||'');
 

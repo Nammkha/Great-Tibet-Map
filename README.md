@@ -107,7 +107,8 @@ render as empty boxes. The interactive version shows both.
   Kunlun, Gangdise and Nyenchen Tanglha; and four peaks. Named in Tibetan, and
   in Latin letters, following the same Labels toggle as the towns. Drawn only
   where they run through the three regions. Off by default; the regions come
-  first and the physical layer is context you opt into.
+  first and the physical layer is context you opt into. One *Physical* button
+  cycles Off → Rivers → Ranges → Both.
 - **Towns, world locator inset and dark/light themes**, each toggleable.
 - **A proportional bar** across the top, sized by each region's share of the
   total area.
@@ -130,6 +131,8 @@ Set these on the container div. They can also be changed at runtime.
      data-inset="true"        <!-- world locator box -->
      data-rivers="false"      <!-- true draws the rivers and lakes -->
      data-ranges="false"      <!-- true draws the ranges and peaks -->
+                              <!-- the two stay independent; the Physical
+                                   button cycles through their four combos -->
      data-selected="kham">    <!-- utsang | kham | amdo | "" -->
 </div>
 ```
