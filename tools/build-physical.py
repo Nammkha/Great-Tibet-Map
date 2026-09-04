@@ -322,7 +322,7 @@ LAKES = [
 #
 # (lon, lat), west to east or north to south.
 PEAK_RANGES = [
-    ('', 'Himalaya', 0.56, -10, [
+    ('ཧི་མ་ལ་སྒང་', 'Himalaya', 0.56, -10, [
         (74.60, 35.20),   # Nanga Parbat    8125 m
         (76.00, 34.00),   # Nun             7135 m
         (80.00, 30.50),   # Nanda Devi      7817 m
@@ -332,7 +332,7 @@ PEAK_RANGES = [
         (90.50, 28.00),   # Gangkar Punsum  7570 m
         (92.50, 27.90),   # Kangto          7060 m
         (95.06, 29.63)]), # Namcha Barwa    7782 m
-    ('\u0f41\u0f74\u0f0b\u0f53\u0f74\u0f0b\u0f62\u0f72\u0f0b\u0f62\u0f92\u0fb1\u0f74\u0f51\u0f0b', 'Khunu Ri Gyu', 0.50, -10, [
+    ('\u0f41\u0f74\u0f0b\u0f53\u0f74\u0f0b\u0f62\u0f72\u0f0b\u0f62\u0f92\u0fb1\u0f74\u0f51\u0f0b', 'khunu ri rgyud', 0.50, -10, [
         # centreline of Natural Earth's KUNLUN MOUNTAINS polygon, smoothed
         (78.70, 36.50), (80.30, 36.20), (81.80, 36.10), (83.30, 36.60),
         (86.40, 37.00), (88.00, 36.80), (89.50, 37.20), (91.00, 37.20),
@@ -361,23 +361,24 @@ PEAK_RANGES = [
 # the water.  Pobar in the west and Minya in the east are not between a pair and
 # are anchored on their own high ground instead.
 GANG_BETWEEN = [
-    ('', 'Duldza Zalmo gang', 0.04, -44, 'Drichu',         'Za Qu',  (31.8, 33.6)),
-    ('', 'Mardza gang',          0.84, -32, 'Ma Chu',         'Drichu', (32.0, 33.4)),
-    ('', 'Tshawa gang',       0.70, 8, 'Gyalmo Ngulchu', 'Za Qu',  (28.2, 30.6)),
-    ('', 'Markham gang',      0.48, 8, 'Za Qu',          'Drichu', (28.2, 30.6)),
+    ('དུལ་དབང་ཟལ་མོ་སྒང་', 'Duldza Zalmo Gang', 0.04, -44, 'Drichu',         'Za Qu',  (31.8, 33.6)),
+    ('མར་རྫ་སྒང་', 'Mardza Gang',          0.84, -32, 'Ma Chu',         'Drichu', (32.0, 33.4)),
+    ('ཚ་བ་སྒང་', 'Tshawa Gang',       0.70, 8, 'Gyalmo Ngulchu', 'Za Qu',  (28.2, 30.6)),
+    ('རྨར་ཁམས་སྒང་', 'Markham Gang',      0.48, 8, 'Za Qu',          'Drichu', (28.2, 30.6)),
 ]
 GANG_ANCHORED = [
-    ('', 'Pobar gang', 0.50, -19, [
+    ('པོ་བར་སྒང་', 'Pobar Gang', 0.50, -19, [
         (94.40, 30.30), (95.30, 30.00), (96.20, 29.90), (97.00, 30.00)]),
-    ('', 'Minya gang', 0.34, 11, [
+    ('མི་ཉག་སྒང་', 'Minyag Gang', 0.34, 11, [
         (100.60, 30.80),
         (101.88, 29.60),   # Gongga Shan / Minyag Gangkar 7556 m
         (102.10, 29.10)]),
 ]
 
 
-# Namcha Barwa and Amnye Machen are not on the author's list, so they carry the
-# Latin name only and are marked as having no Tibetan yet.
+# Karakoram, Namcha Barwa and Amnye Machen are not on the author's list, so they
+# carry the Latin name only and are marked as having no Tibetan yet. They are
+# the last three features still in that state.
 # Peak names are placed on a ring of positions round the marker by
 # tools/place-labels.py; the last two numbers are the offset it chose.
 PEAKS = [
