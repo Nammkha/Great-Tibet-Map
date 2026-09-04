@@ -150,6 +150,59 @@ def label_anchor(runs, frac=0.45, core=(120.0, 60.0, 1060.0, 700.0)):
     return None
 
 
+KHAM_LONS = (93.0, 103.5)   # the gang all lie within this band
+
+
+def lonlat_course(rivers_src, names, span, lons=KHAM_LONS):
+    """The river's course over a latitude span, in degrees.  Bounded in
+    longitude as well: Natural Earth carries the Yangtze's lower reach under the
+    same course, and at 29 N 'Chang Jiang' is out at 106 E in Sichuan, which
+    dragged the Markham gang midline a full four degrees east of Kham."""
+    pts = []
+    for feat in rivers_src['features']:
+        if feat['properties'].get('name') not in names:
+            continue
+        geom = feat['geometry']
+        parts = [geom['coordinates']] if geom['type'] == 'LineString' else geom['coordinates']
+        for part in parts:
+            pts += [(lo, la) for lo, la in part
+                    if span[0] - 1 <= la <= span[1] + 1 and lons[0] <= lo <= lons[1]]
+    return pts
+
+
+def midline(a_pts, b_pts, span, steps=9):
+    """Ridge between two rivers: at each latitude take the midpoint of where
+    the two courses sit.  This is the definition of a gang, so deriving it this
+    way keeps the ranges and the rivers coherent by construction."""
+    out = []
+    for i in range(steps):
+        la = span[1] - (span[1] - span[0]) * i / (steps - 1.0)
+        def lon_at(pts):
+            near = sorted(pts, key=lambda p: abs(p[1] - la))[:4]
+            return sum(p[0] for p in near) / len(near) if near else None
+        la_, lb = lon_at(a_pts), lon_at(b_pts)
+        if la_ is None or lb is None:
+            continue
+        out.append(((la_ + lb) / 2.0, la))
+    return out
+
+
+def build_ranges(rivers_src):
+    """PEAK_RANGES as given, plus the six gang: four derived from the rivers
+    that bound them and two anchored on their own high ground."""
+    out = list(PEAK_RANGES)
+    seg = {r[1]: r[2] for r in RIVERS}          # display name -> NE segment names
+    for bo, name, frac, dy, a, b, span in GANG_BETWEEN:
+        spine = midline(lonlat_course(rivers_src, seg[a], span),
+                        lonlat_course(rivers_src, seg[b], span), span)
+        if len(spine) > 1:
+            out.append((bo, name, frac, dy, spine))
+        else:
+            sys.stderr.write('could not derive %s from %s/%s\n' % (name, a, b))
+    out += GANG_ANCHORED
+    return out
+
+
 def rings_of(dstr):
     out = []
     for sub in dstr.split('M')[1:]:
@@ -184,16 +237,18 @@ def near_edge(rings, x, y, tol=7.0):
     return False
 
 
-def clip_to_tibet(runs, tibet):
+def clip_to_tibet(runs, tibet, tol=0.0):
     """Keep only the parts of each run that fall inside Tibet.  The map is about
     the three regions, so a river is drawn where it runs through them and not
     across the whole frame; the render also clips to the same outline, which
     tidies the cut ends this leaves at vertex granularity."""
+    keep = (lambda x, y: near_edge(tibet, x, y, tol)) if tol else \
+           (lambda x, y: inside(tibet, x, y))
     out = []
     for run in runs:
         cur = []
         for i, p in enumerate(run):
-            if inside(tibet, p[0], p[1]):
+            if keep(p[0], p[1]):
                 if not cur and i:
                     cur.append(run[i - 1])
                 cur.append(p)
@@ -221,13 +276,13 @@ def to_path(runs, closed=False):
 # carry (Brahmaputra, Mekong, Yangtze ...) are not shown on the map.  The last
 # two numbers are where the label sits along the course and how far off it.
 RIVERS = [
-    ('ཡར་ཀླུང་གཙང་པོ་', 'Yarlung Tsangpo', ['Maquan', 'Yarlung', 'Dihang', 'Brahmaputra'], 1, 0.82, 17),
-    ('རྨ་ཆུ་',           'Ma Chu',          ['Huang'],                                     1, 0.48, 8),
-    ('འབྲི་ཆུ་',          'Drichu',          ['Tuotuo', 'Tongtian', 'Jinsha', 'Chang Jiang'],1, 0.08, 8),
+    ('ཡར་ཀླུང་གཙང་པོ་', 'Yarlung Tsangpo', ['Maquan', 'Yarlung', 'Dihang', 'Brahmaputra'], 1, 0.78, 8),
+    ('རྨ་ཆུ་',           'Ma Chu',          ['Huang'],                                     1, 0.50, 8),
+    ('འབྲི་ཆུ་',          'Drichu',          ['Tuotuo', 'Tongtian', 'Jinsha', 'Chang Jiang'],1, 0.04, 8),
     ('རྫ་ཆུ་',           'Za Qu',           ['Za', 'Lancang', 'Mekong'],                   1, 0.96, 11),
-    ('རྒྱ་མོ་རྔུལ་ཆུ་',    'Gyalmo Ngulchu',  ['Nu', 'Salween'],                             1, 0.52, -7),
-    ('སེང་གེ་ཁ་འབབ་',    'Sangge Khabab',   ['Shiquan', 'Indus'],                          1, 0.92, -16),
-    ('གླང་ཆེན་ཁ་འབབ་',   'Langchen Khabab', ['Sutlej'],                                    0, 0.82, 8),
+    ('རྒྱ་མོ་རྔུལ་ཆུ་',    'Gyalmo Ngulchu',  ['Nu', 'Salween'],                             1, 0.48, -10),
+    ('སེང་གེ་ཁ་འབབ་',    'Sangge Khabab',   ['Shiquan', 'Indus'],                          1, 0.84, -22),
+    ('གླང་ཆེན་ཁ་འབབ་',   'Langchen Khabab', ['Sutlej'],                                    0, 0.32, 20),
     # Macha Khabab is left out: Natural Earth's Ghaghara segment begins at the
     # border, so only about 15 px of it falls inside Tibet -- too little to read
     # as a river, while its name crowded the corner where the Sengge and Langchen
@@ -250,37 +305,86 @@ LAKES = [
 # other names; they are not hand-picked.  Natural Earth ships no range
 # centrelines, so these are drawn by hand from the ranges' mapped crests -- they
 # carry the label, they are not a claim about exact extent.
-RANGES = [
-    # The six gang of Kham -- the ridges of "Chushi Gangdruk", four rivers and
-    # six ranges -- then the ranges that wall the plateau.  No dataset carries
-    # the gang, so these six spines are placed from where each gang sits between
-    # its rivers; they carry the name and are the part of this file most in need
-    # of a Khampa eye.
-    ('', 'Duldza Zalmo gang', 0.04, -34, [(95.8,33.3),(96.7,32.9),(97.6,32.5),(98.4,32.1)]),
-    ('', 'Mardza gang',       0.68, -34, [(98.4,32.9),(99.1,32.6),(99.8,32.4),(100.4,32.1)]),
-    ('', 'Pobar gang',        0.70, -10, [(94.4,30.3),(95.3,30.0),(96.2,29.9),(97.0,30.0)]),
-    ('', 'Tshawa gang',       0.50, 8, [(97.4,30.5),(97.9,29.7),(98.3,28.9),(98.6,28.1)]),
-    ('', 'Markham gang',      0.50, 8, [(98.7,30.6),(99.1,29.8),(99.4,29.0),(99.7,28.2)]),
-    ('', 'Minya gang',        0.72, 8, [(100.6,30.8),(101.2,30.3),(101.7,29.7),(102.1,29.1)]),
+# Mountain ranges.
+#
+# Earlier versions of this file carried spines drawn by hand, which put the
+# Himalaya's western end about three degrees too far north and the Kunlun two
+# degrees too far west.  They are built from Natural Earth now instead:
+#
+#   * a named range follows its own great peaks, taken with their real
+#     coordinates from ne_10m_geography_regions_elevation_points.  A range's
+#     crest is the line of its high summits, which is both accurate and
+#     checkable -- every point below is a named mountain unless marked anchor.
+#   * the six gang of Kham are the ridges between the rivers, which is what
+#     "Chushi Gangdruk" says, so they are computed from the river courses at
+#     build time rather than listed.  Nothing about them is placed by hand
+#     except which two rivers bound each one.
+#
+# (lon, lat), west to east or north to south.
+PEAK_RANGES = [
+    ('', 'Himalaya', 0.56, -10, [
+        (74.60, 35.20),   # Nanga Parbat    8125 m
+        (76.00, 34.00),   # Nun             7135 m
+        (80.00, 30.50),   # Nanda Devi      7817 m
+        (83.50, 28.70),   # Dhaulagiri      8172 m
+        (86.93, 28.00),   # Chomolungma     8848 m
+        (88.20, 27.70),   # Kanchenjunga    8586 m
+        (90.50, 28.00),   # Gangkar Punsum  7570 m
+        (92.50, 27.90),   # Kangto          7060 m
+        (95.06, 29.63)]), # Namcha Barwa    7782 m
+    ('\u0f41\u0f74\u0f0b\u0f53\u0f74\u0f0b\u0f62\u0f72\u0f0b\u0f62\u0f92\u0fb1\u0f74\u0f51\u0f0b', 'Khunu Ri Gyu', 0.50, -10, [
+        # centreline of Natural Earth's KUNLUN MOUNTAINS polygon, smoothed
+        (78.70, 36.50), (80.30, 36.20), (81.80, 36.10), (83.30, 36.60),
+        (86.40, 37.00), (88.00, 36.80), (89.50, 37.20), (91.00, 37.20),
+        (92.60, 36.80), (94.10, 36.45), (95.60, 36.40), (97.20, 35.90),
+        (98.70, 35.70)]),
+    ('', 'Karakoram', 0.50, -10, [
+        (74.60, 36.50),   # Batura Mustagh I 7795 m
+        (76.51, 35.88),   # K2               8611 m
+        (77.80, 35.20),   # Shahi Kangri     6934 m
+        (78.50, 33.80)]), # Kangju Kangri    6725 m
+    ('\u0f42\u0f44\u0f66\u0f0b\u0f4f\u0f72\u0f0b\u0f66\u0f7a\u0f0b', 'Gangdise', 0.72, 8, [
+        (81.00, 32.80),   # Nganglong Kangri 6720 m
+        (81.31, 31.07),   # Gang Rinpoche    6638 m
+        (83.50, 30.90),   # anchor
+        (86.50, 30.70),   # anchor
+        (88.50, 30.50)]), # anchor, meeting the Nyenchen Tanglha
+    ('\u0f42\u0f49\u0f53\u0f0b\u0f46\u0f7a\u0f53\u0f0b\u0f50\u0f44\u0f0b\u0f63\u0fb7\u0f0b', 'Nyenchen Tanglha', 0.22, -10, [
+        (90.57, 30.38),   # Nyenchen Tanglha 7162 m
+        (92.50, 30.60),   # anchor
+        (94.30, 30.20),   # anchor
+        (95.00, 29.80)]), # Gyala Peri       7294 m
+]
 
-    ('', 'Himalaya', 0.50, 8, [(74.8,35.2),(76.0,34.0),(77.5,32.8),(79.0,31.6),(80.5,30.8),(82.0,30.2),
-                  (84.0,29.5),(86.0,28.6),(87.5,28.1),(89.0,27.9),(90.5,28.0),(92.0,28.3),
-                  (93.5,28.8),(95.0,29.3),(95.8,29.6)]),
-    ('', 'Karakoram', 0.50, -10, [(74.8,36.0),(75.8,35.9),(76.8,35.7),(77.8,35.5),(78.6,35.2)]),
-    ('ཁུ་ནུ་རི་རྒྱུད་', 'Kunlun', 0.50, -10, [(76.0,36.4),(78.0,36.2),(80.5,35.9),(83.0,35.7),(85.5,35.9),(88.0,36.2),
-                (90.5,36.5),(93.0,36.4),(95.5,36.1),(97.5,35.8)]),
-    ('གངས་ཏི་སེ་', 'Gangdise', 0.50, 8, [(80.5,31.4),(82.5,31.2),(84.5,31.0),(86.5,30.8),(88.5,30.6),(90.0,30.5)]),
-    ('གཉན་ཆེན་ཐང་ལྷ་', 'Nyenchen Tanglha', 0.50, -10, [(90.0,30.4),(91.5,30.3),(93.0,30.4),(94.3,30.0),(95.2,29.8)]),
+# Four of the gang are simply the ridge between two rivers, so their spines are
+# midlines computed from the river courses; they cannot drift out of step with
+# the water.  Pobar in the west and Minya in the east are not between a pair and
+# are anchored on their own high ground instead.
+GANG_BETWEEN = [
+    ('', 'Duldza Zalmo gang', 0.04, -16, 'Drichu',         'Za Qu',  (31.8, 33.6)),
+    ('', 'Mardza gang',       0.28, 11, 'Ma Chu',         'Drichu', (32.0, 33.4)),
+    ('', 'Tshawa gang',       0.70, 8, 'Gyalmo Ngulchu', 'Za Qu',  (28.2, 30.6)),
+    ('', 'Markham gang',      0.48, 8, 'Za Qu',          'Drichu', (28.2, 30.6)),
+]
+GANG_ANCHORED = [
+    ('', 'Pobar gang', 0.50, -19, [
+        (94.40, 30.30), (95.30, 30.00), (96.20, 29.90), (97.00, 30.00)]),
+    ('', 'Minya gang', 0.34, 11, [
+        (100.60, 30.80),
+        (101.88, 29.60),   # Gongga Shan / Minyag Gangkar 7556 m
+        (102.10, 29.10)]),
 ]
 
 
 # Namcha Barwa and Amnye Machen are not on the author's list, so they carry the
 # Latin name only and are marked as having no Tibetan yet.
-PEAKS = [                                     # last field: label below (1) or above (-1)
-    ('ཇོ་མོ་གླང་མ་',   'Chomo lungma', 86.925, 27.988, -1),
-    ('གངས་རིན་པོ་ཆེ་', 'Gang Rinpoche',81.312, 31.067,  1),
-    ('',              'Namcha Barwa', 95.055, 29.628,  1),
-    ('',              'Amnye Machen', 99.478, 34.828, -1),
+# Peak names are placed on a ring of positions round the marker by
+# tools/place-labels.py; the last two numbers are the offset it chose.
+PEAKS = [
+    ('ཇོ་མོ་གླང་མ་', 'Chomo lungma', 86.925, 27.988, 14, 6),
+    ('གངས་རིན་པོ་ཆེ་', 'Gang Rinpoche', 81.312, 31.067, 54, 6),
+    ('', 'Namcha Barwa', 95.055, 29.628, 9, -9),
+    ('', 'Amnye Machen', 99.478, 34.828, 0, -14),
 ]
 
 BOX = (-40.0, -40.0, 1220.0, 785.0)      # viewBox plus a little slack
@@ -336,20 +440,28 @@ def main():
         if runs:
             out['lakes'].append({'bo': bo, 'en': en, 'd': to_path(runs, closed=True)})
 
-    for bo, name, frac, dy, spine in RANGES:
+    for bo, name, frac, dy, spine in build_ranges(rivers_src):
         pts = simplify([project(lo, la) for lo, la in spine], TOL_RANGE)
-        runs = clip_to_tibet([pts], tibet)
-        if not runs:
+        # A range often forms the border rather than sitting inside it -- the
+        # Himalayan crest is the frontier -- so crests are kept within a short
+        # distance of the outline, not strictly inside it.
+        runs = clip_to_tibet([pts], tibet, tol=14.0)
+        # The border tolerance above keeps a range whose crest *is* the frontier,
+        # such as the Himalaya.  It must not also keep one that merely passes
+        # nearby: the Karakoram has no point inside Tibet at all, and was drawing
+        # a full-size name out in Kashmir attached to a 51 px stub.
+        if not any(inside(tibet, x, y) for r in runs for x, y in r):
+            sys.stderr.write('%s: no point inside Tibet, left out\n' % name)
             continue
         out['ranges'].append({'bo': bo, 'en': name, 'd': to_path(runs), 'dy': dy,
                               'lab': label_anchor(runs, frac)})
 
-    for bo, en, lon, lat, side in PEAKS:
+    for bo, en, lon, lat, ldx, ldy in PEAKS:
         x, y = project(lon, lat)
         if not near_edge(tibet, x, y):
             continue
         out['peaks'].append({'bo': bo, 'en': en, 'p': [round(x, 1), round(y, 1)],
-                             'side': side})
+                             'ldx': ldx, 'ldy': ldy})
 
     json.dump(out, sys.stdout, ensure_ascii=False, separators=(',', ':'))
     sys.stderr.write('rivers %d  lakes %d  ranges %d  peaks %d\n'

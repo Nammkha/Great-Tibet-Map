@@ -34,7 +34,9 @@ TIBET = bp.rings_of(DATA['outline'])
 KHAM = bp.rings_of(DATA['regions']['kham']['d'])
 PAD = 2.5
 FRACS = [i / 100 for i in range(4, 97, 2)]
-DYS = list(range(-34, -5, 3)) + list(range(8, 35, 3))
+# A name that cannot fit near its own crest may move further off it; the widget
+# draws a leader line past 30 units so it stays clear which ridge it belongs to.
+DYS = list(range(-64, -5, 3)) + list(range(8, 65, 3))
 
 
 def corners(cx, cy, w, h, ang):
@@ -71,26 +73,46 @@ def overlap(A, B):
     return depth * depth
 
 
-OB = [(o, corners(o['x'] + o['w'] / 2, o['y'] + o['h'] / 2, o['w'], o['h'], 0))
+# Town names, rivers and other labels are hard obstacles: a name must not touch
+# them.  The region titles are soft -- they are set large, they step back when a
+# physical layer is on, and two of the gang have nowhere in Kham that clears
+# them -- so crossing one is allowed at a cost rather than forbidden.
+SOFT = 0.06
+OB = [(o, corners(o['x'] + o['w'] / 2, o['y'] + o['h'] / 2, o['w'], o['h'], 0),
+       SOFT if o['kind'] == 'region' else 1.0)
       for o in M['obstacles']]
 
 FEATURES = ([(g['en'], 'range', bp.rings_of(g['d'])) for g in DATA['ranges']] +
-            [(r['en'], 'river', bp.rings_of(r['d'])) for r in DATA['rivers']])
+            [(r['en'], 'river', bp.rings_of(r['d'])) for r in DATA['rivers']] +
+            [(k['en'], 'peak', [[tuple(k['p'])]]) for k in DATA['peaks']])
 
-placed, chosen = [], {}
-for name, kind, runs in sorted(FEATURES, key=lambda r: -SIZE.get(r[0], {'w': 0})['w']):
-    if name not in SIZE:
-        sys.stderr.write('no measurement for %r, skipped\n' % name); continue
-    runs = [r for r in runs if len(r) > 1]
+# A peak is a point, so its name is tried on a ring of positions round the
+# marker rather than slid along a line.  This is what moves Chomolungma off
+# the Himalayan crest, which its fixed "below the marker" position sat on.
+PEAK_SPOTS = [(dx, dy) for r in (14, 24, 38, 54)
+              for dx, dy in ((0, r), (0, -r), (r, 6), (-r, 6),
+                             (r * 0.7, -r * 0.7), (-r * 0.7, -r * 0.7),
+                             (r * 0.7, r * 0.7), (-r * 0.7, r * 0.7))]
+
+def place_one(name, kind, runs, others):
+    """Best position for one label given every other label's current box."""
     w, h = SIZE[name]['w'], SIZE[name]['h']
+    if kind == 'peak':
+        px, py = runs[0][0]
+        cands = [({'p': (px + dx, py + dy), 'a': 0.0}, 0, (dx, dy)) for dx, dy in PEAK_SPOTS]
+    else:
+        runs = [r for r in runs if len(r) > 1]
+        cands = []
+        for dy in DYS:
+            for f in FRACS:
+                lab = bp.label_anchor(runs, f)
+                if lab:
+                    cands.append((lab, dy, (f, dy)))
     best = None
-    for dy in DYS:
-        for f in FRACS:
-            lab = bp.label_anchor(runs, f)
-            if not lab:
-                continue
+    for lab, dy, key in cands:
+        if True:
             Q = label_quad(lab['p'], lab['a'], w, h, dy)
-            cost = sum(overlap(Q, q) for _, q in OB) + sum(overlap(Q, q) for q in placed)
+            cost = sum(overlap(Q, q) * wt for _, q, wt in OB) + sum(overlap(Q, q) for q in others)
             xs = [p[0] for p in Q]; ys = [p[1] for p in Q]
             cx, cy = sum(xs) / 4, sum(ys) / 4
             # the layers are clipped to Tibet, so the names belong inside it too
@@ -98,15 +120,62 @@ for name, kind, runs in sorted(FEATURES, key=lambda r: -SIZE.get(r[0], {'w': 0})
                 cost += 4000
             if name in GANG and not bp.inside(KHAM, cx, cy):
                 cost += 150
-            cost += abs(f - 0.5) * 25 + abs(abs(dy) - 9) * 4
+            if kind == 'peak':
+                cost += (abs(key[0]) + abs(key[1])) * 1.2   # prefer close to the marker
+            else:
+                # gentle: clearing a real overlap must beat hugging the crest
+                cost += abs(key[0] - 0.5) * 6 + abs(abs(dy) - 9) * 0.7
             if best is None or cost < best[0]:
-                best = (cost, f, dy, Q)
-    if best is None:
-        sys.stderr.write('nowhere to put %r\n' % name); continue
-    cost, f, dy, Q = best
-    resid = sum(overlap(Q, q) for _, q in OB) + sum(overlap(Q, q) for q in placed)
-    placed.append(Q); chosen[name] = [f, dy]
-    hits = [o['t'][:16] for o, q in OB if overlap(Q, q) > 0]
-    print('  %-20s %-6s frac %.2f  dy %+3d   overlap %6.1f  %s'
-          % (name, kind, f, dy, resid, ('hits: ' + ', '.join(hits)) if hits else 'clear'))
+                best = (cost, key, Q)
+    return best
+
+
+ITEMS = [(n, k, r) for n, k, r in FEATURES if n in SIZE]
+for n, k, r in FEATURES:
+    if n not in SIZE:
+        sys.stderr.write('no measurement for %r, skipped\n' % n)
+
+boxes, chosen = {}, {}
+order = sorted(ITEMS, key=lambda r: -SIZE[r[0]]['w'])
+for name, kind, runs in order:                       # first pass, largest first
+    got = place_one(name, kind, runs, [boxes[k] for k in boxes])
+    if got:
+        chosen[name] = list(got[1]); boxes[name] = got[2]
+
+for sweep in range(6):                               # refine until settled
+    resid = {n: sum(overlap(boxes[n], q) * wt for _, q, wt in OB)
+              + sum(overlap(boxes[n], boxes[m]) for m in boxes if m != n) for n in boxes}
+    worst = sorted(resid, key=lambda n: -resid[n])
+    if resid[worst[0]] <= 0:
+        break
+    moved = False
+    for name in worst:
+        if resid[name] <= 0:
+            break
+        kind, runs = next((k, r) for n, k, r in ITEMS if n == name)
+        got = place_one(name, kind, runs, [boxes[m] for m in boxes if m != name])
+        if not got:
+            continue
+        after = sum(overlap(got[2], q) * wt for _, q, wt in OB) \
+              + sum(overlap(got[2], boxes[m]) for m in boxes if m != name)
+        if after < resid[name] - 1e-9:
+            chosen[name] = list(got[1]); boxes[name] = got[2]; moved = True
+    if not moved:
+        break
+
+total = 0.0
+for name, kind, runs in order:
+    if name not in boxes:
+        continue
+    Q = boxes[name]
+    r = sum(overlap(Q, q) * wt for _, q, wt in OB) + sum(overlap(Q, boxes[m]) for m in boxes if m != name)
+    total += r
+    key = tuple(chosen[name])
+    hits = [o['t'][:16] for o, q, wt in OB if overlap(Q, q) > 0 and wt > SOFT] + \
+           [m for m in boxes if m != name and overlap(Q, boxes[m]) > 0]
+    print('  %-20s %-6s %-18s overlap %6.1f  %s'
+          % (name, kind, ('dx %+d dy %+d' % key) if kind == 'peak'
+             else ('frac %.2f dy %+d' % key), r,
+             ('hits: ' + ', '.join(hits)) if hits else 'clear'))
+print('\n  total residual overlap: %.1f'% total)
 json.dump(chosen, open(os.path.join(HERE, 'placement.json'), 'w'))
