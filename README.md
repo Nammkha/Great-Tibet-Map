@@ -107,8 +107,13 @@ render as empty boxes. The interactive version shows both.
   Kunlun, Gangdise and Nyenchen Tanglha; and four peaks. Named in Tibetan, and
   in Latin letters, following the same Labels toggle as the towns. Drawn only
   where they run through the three regions. Off by default; the regions come
-  first and the physical layer is context you opt into.
+  first and the physical layer is context you opt into. One *Physical* button
+  cycles Off → Rivers → Ranges → Both.
 - **Towns, world locator inset and dark/light themes**, each toggleable.
+- **Zoom and pan** — a `+` / slider / `−` control at the map's corner, drag to
+  pan, pinch on a touch screen, double-click, `Ctrl`/`⌘` and the wheel, or the
+  keyboard. A plain wheel is left alone so the map never swallows the scroll of
+  the page it sits in, and one finger only pans once you have zoomed in.
 - **A proportional bar** across the top, sized by each region's share of the
   total area.
 - **Keyboard accessible** — regions are focusable (`Tab`, then `Enter` or
@@ -130,6 +135,9 @@ Set these on the container div. They can also be changed at runtime.
      data-inset="true"        <!-- world locator box -->
      data-rivers="false"      <!-- true draws the rivers and lakes -->
      data-ranges="false"      <!-- true draws the ranges and peaks -->
+                              <!-- the two stay independent; the Physical
+                                   button cycles through their four combos -->
+     data-zoom="true"        <!-- false removes zoom, pan and the control -->
      data-selected="kham">    <!-- utsang | kham | amdo | "" -->
 </div>
 ```
@@ -145,6 +153,9 @@ widget's `<style>`; [`INTEGRATION.md`](INTEGRATION.md) lists all of them.
 TibetMap.select('kham');        // or 'utsang', 'amdo', '' to clear
 TibetMap.get();                 // 'kham' | null
 TibetMap.setTheme('light');
+TibetMap.setZoom(2.5);          // 1 (fit) to 8
+TibetMap.getZoom();             // 2.5
+TibetMap.resetView();           // back to fit, centred
 TibetMap.on(function (region) { /* fires on every selection change */ });
 TibetMap.regions;               // the descriptive copy, editable
 TibetMap.data;                  // raw paths, areas, coordinates
