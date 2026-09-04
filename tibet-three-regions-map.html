@@ -57,6 +57,7 @@
   --tm-ink-dim:#8FA0AC;
   --tm-rule:#22303A;
   --tm-panel:#101922;
+  --tm-scrim:rgba(11,17,23,.82);
 
   --tm-display:'Fraunces','Iowan Old Style',Georgia,serif;
   --tm-ui:'IBM Plex Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
@@ -98,6 +99,7 @@
   --tm-ink-dim:#6B6558;
   --tm-rule:#D2CBBC;
   --tm-panel:#FFFDF8;
+  --tm-scrim:rgba(255,253,248,.86);
 }
 
 /* ── header ──────────────────────────────────────────────── */
@@ -163,6 +165,56 @@
    blank band or a hard cut at the map's edge; the stage clips the sideways spill. */
 .tibmap__stage{position:relative;background:var(--tm-bg);min-width:0;overflow:hidden;}
 .tibmap__svg{display:block;width:100%;height:100%;overflow:visible;}
+
+/* ── zoom and pan ────────────────────────────────────────── */
+/* touch-action decides who gets the gesture. At fit zoom there is nothing to
+   pan, so one finger scrolls the host page as it always did; once zoomed in,
+   one finger pans the map instead. Two fingers always pinch, because the
+   browser's own pinch-zoom is off in both states. */
+.tibmap__svg{touch-action:pan-y;}
+.tibmap[data-zoomed="true"] .tibmap__svg{touch-action:none;cursor:grab;}
+.tibmap[data-panning="true"] .tibmap__svg{cursor:grabbing;}
+.tibmap__stage:focus-visible{outline:2px solid var(--tm-gold);outline-offset:-2px;}
+
+.tibmap__zoom{
+  position:absolute;right:12px;bottom:12px;z-index:2;
+  display:flex;flex-direction:column;align-items:center;gap:6px;
+}
+.tibmap[data-zoom="false"] .tibmap__zoom{display:none;}
+.tibmap__zbtn{
+  appearance:none;width:30px;height:30px;padding:0;
+  display:flex;align-items:center;justify-content:center;
+  background:var(--tm-scrim);border:1px solid var(--tm-rule);border-radius:var(--tm-radius);
+  color:var(--tm-ink-dim);font:400 17px/1 var(--tm-ui);cursor:pointer;
+  transition:color .2s,border-color .2s;
+}
+.tibmap__zbtn:hover:not(:disabled){color:var(--tm-gold);border-color:var(--tm-gold);}
+.tibmap__zbtn:focus-visible{outline:2px solid var(--tm-gold);outline-offset:2px;}
+.tibmap__zbtn:disabled{opacity:.38;cursor:default;}
+.tibmap__zbtn[hidden]{display:none;}
+.tibmap__zslot{
+  width:30px;height:104px;display:flex;align-items:center;justify-content:center;
+  background:var(--tm-scrim);border:1px solid var(--tm-rule);border-radius:var(--tm-radius);
+}
+/* A vertical range input is still not portable, so the slider is a horizontal
+   one turned on its side -- which keeps the native control, and its keyboard. */
+.tibmap__zrange{
+  appearance:none;-webkit-appearance:none;background:transparent;
+  width:92px;height:14px;margin:0;transform:rotate(-90deg);cursor:pointer;
+}
+.tibmap__zrange::-webkit-slider-runnable-track{height:3px;border-radius:2px;background:var(--tm-hair);}
+.tibmap__zrange::-moz-range-track{height:3px;border-radius:2px;background:var(--tm-hair);}
+.tibmap__zrange::-webkit-slider-thumb{
+  -webkit-appearance:none;width:11px;height:11px;margin-top:-4px;
+  border:0;border-radius:50%;background:var(--tm-gold);
+}
+.tibmap__zrange::-moz-range-thumb{width:11px;height:11px;border:0;border-radius:50%;background:var(--tm-gold);}
+.tibmap__zrange:focus-visible{outline:2px solid var(--tm-gold);outline-offset:3px;}
+@container (max-width:760px){
+  .tibmap__zoom{right:8px;bottom:8px;gap:5px;}
+  .tibmap__zslot{height:84px;}
+  .tibmap__zrange{width:74px;}
+}
 
 /* ── map layers ──────────────────────────────────────────── */
 .tibmap .tm-sea{fill:var(--tm-bg);}
@@ -509,7 +561,7 @@
     '<div class="tibmap__bar" role="group" aria-label="Select a region">'+segs+'</div>'+
   '</div>'+
   '<div class="tibmap__body">'+
-    '<div class="tibmap__stage">'+
+    '<div class="tibmap__stage" tabindex="0" aria-label="Map. Zoom with plus and minus, pan with the arrow keys, 0 resets.">'+
       '<svg class="tibmap__svg" viewBox="'+DATA.viewBox+'" role="img" aria-label="Map of the three traditional regions of Tibet: Ü-Tsang, Kham and Amdo" preserveAspectRatio="xMidYMid meet">'+
       '<defs>'+
         hatch('tmTex-utsang',45,'rgba(255,255,255,.05)')+
@@ -521,6 +573,7 @@
         '</filter>'+
       '</defs>'+
       '<rect class="tm-sea" x="0" y="0" width="'+W+'" height="'+H+'"/>'+
+      '<g class="tm-zoom">'+
       '<path class="tm-grat" d="'+DATA.graticule+'"/>'+
       '<path class="tm-neigh" d="'+DATA.neighbours+'"/>'+
       '<path class="tm-china" d="'+DATA.chinaRest+'"/>'+
@@ -540,8 +593,17 @@
       '<g class="tm-hydro">'+hydroLab+'</g>'+
       '<g class="tm-relief">'+reliefLab+'</g>'+
       '<g class="tm-cities">'+cities+'</g>'+
+      '</g>'+
       inset+
       '</svg>'+
+      '<div class="tibmap__zoom" role="group" aria-label="Zoom">'+
+        '<button class="tibmap__zbtn" type="button" data-zact="in" aria-label="Zoom in" title="Zoom in">+</button>'+
+        '<div class="tibmap__zslot">'+
+          '<input class="tibmap__zrange" type="range" min="0" max="100" step="1" value="0" aria-label="Zoom level">'+
+        '</div>'+
+        '<button class="tibmap__zbtn" type="button" data-zact="out" aria-label="Zoom out" title="Zoom out" disabled>\u2212</button>'+
+        '<button class="tibmap__zbtn" type="button" data-zact="reset" aria-label="Reset zoom" title="Reset zoom" hidden>\u21ba</button>'+
+      '</div>'+
     '</div>'+
     '<aside class="tibmap__panel" id="tibmap-panel" aria-live="polite"><div class="tibmap__pbody"></div></aside>'+
     '<div class="tibmap__foot">'+
@@ -649,6 +711,170 @@
     listeners.forEach(function(fn){try{fn(k||null);}catch(e){}});
   }
 
+  /* ── zoom and pan ────────────────────────────────────
+     The map is moved by a transform on one <g> rather than by rewriting the
+     viewBox, so the sea rect and the locator inset can stay outside it: the
+     background is always painted and the inset stays pinned to its corner.
+     getScreenCTM() does the screen-to-user conversion, which keeps the
+     arithmetic right whatever preserveAspectRatio does with a stage taller
+     than the map itself. */
+  var Z_MIN=1, Z_MAX=8, Z_STEP=1.5;
+  var stage=root.querySelector('.tibmap__stage'),
+      svg=root.querySelector('.tibmap__svg'),
+      zg=root.querySelector('.tm-zoom'),
+      zui=root.querySelector('.tibmap__zoom'),
+      zrange=zui.querySelector('.tibmap__zrange'),
+      zbtn={};
+  zui.querySelectorAll('[data-zact]').forEach(function(b){ zbtn[b.getAttribute('data-zact')]=b; });
+
+  var zk=1, zx=0, zy=0, fromSlider=false;
+  function zoomOff(){ return root.getAttribute('data-zoom')==='false'; }
+  function r3(n){ return Math.round(n*1000)/1000; }
+  function kToSlider(k){ return Math.round(100*Math.log(k/Z_MIN)/Math.log(Z_MAX/Z_MIN)); }
+  function sliderToK(v){ return Z_MIN*Math.pow(Z_MAX/Z_MIN, v/100); }
+
+  function zApply(){
+    /* Never let the map be dragged off its own frame: the content, scaled,
+       must still cover the viewBox in both axes. At fit zoom that pins it. */
+    if(zk<=Z_MIN){ zk=Z_MIN; zx=0; zy=0; }
+    else {
+      zx=Math.min(0,Math.max(W*(1-zk),zx));
+      zy=Math.min(0,Math.max(H*(1-zk),zy));
+    }
+    zg.setAttribute('transform','translate('+r3(zx)+','+r3(zy)+') scale('+r3(zk)+')');
+    root.setAttribute('data-zoomed', zk>Z_MIN?'true':'false');
+    if(!fromSlider) zrange.value=kToSlider(zk);
+    zrange.setAttribute('aria-valuetext', (Math.round(zk*10)/10)+'×');
+    zbtn['in'].disabled = zk>=Z_MAX-1e-6;
+    zbtn['out'].disabled = zk<=Z_MIN+1e-6;
+    zbtn['reset'].hidden = zk<=Z_MIN+1e-6;
+  }
+
+  function ptToUser(cx,cy){
+    var m=svg.getScreenCTM();
+    if(!m) return {x:W/2,y:H/2};
+    m=m.inverse();
+    return {x:m.a*cx+m.c*cy+m.e, y:m.b*cx+m.d*cy+m.f};
+  }
+
+  /* Hold the user-space point (ux,uy) still while the scale changes, so the
+     map grows about the pointer rather than about the middle. */
+  function zoomTo(k2,ux,uy){
+    k2=Math.min(Z_MAX,Math.max(Z_MIN,k2));
+    if(ux==null){ ux=W/2; uy=H/2; }
+    zx=ux-(k2/zk)*(ux-zx);
+    zy=uy-(k2/zk)*(uy-zy);
+    zk=k2;
+    zApply();
+  }
+
+  zui.addEventListener('click',function(e){
+    var b=e.target.closest('[data-zact]'); if(!b) return;
+    var a=b.getAttribute('data-zact');
+    zoomTo(a==='in'?zk*Z_STEP : a==='out'?zk/Z_STEP : Z_MIN);
+  });
+  zrange.addEventListener('input',function(){
+    fromSlider=true; zoomTo(sliderToK(+zrange.value)); fromSlider=false;
+  });
+
+  /* Pointer bookkeeping: one pointer pans, two pinch. */
+  var ptrs={}, nPtr=0, armed=false, dragging=false, moved=0,
+      pinchD=0, pinchK=1, swallowClick=false;
+  function ptrList(){ var a=[]; for(var id in ptrs) a.push(ptrs[id]); return a; }
+  function pinchGap(){ var a=ptrList(); return Math.hypot(a[0].x-a[1].x, a[0].y-a[1].y); }
+  function pinchMid(){ var a=ptrList(); return {x:(a[0].x+a[1].x)/2, y:(a[0].y+a[1].y)/2}; }
+
+  svg.addEventListener('pointerdown',function(e){
+    if(zoomOff()) return;
+    if(e.pointerType==='mouse'&&e.button!==0) return;
+    if(!(e.pointerId in ptrs)) nPtr++;
+    ptrs[e.pointerId]={x:e.clientX,y:e.clientY};
+    swallowClick=false;
+    if(nPtr===1){
+      /* On touch at fit zoom the page keeps its scroll; there is nothing to
+         pan to anyway. A mouse may always drag. */
+      armed=(e.pointerType!=='touch'||zk>Z_MIN); dragging=false; moved=0;
+    } else if(nPtr===2){
+      armed=false; dragging=false; root.setAttribute('data-panning','false');
+      pinchD=pinchGap(); pinchK=zk;
+    }
+  });
+
+  svg.addEventListener('pointermove',function(e){
+    if(zoomOff()||!(e.pointerId in ptrs)) return;
+    var prev=ptrs[e.pointerId];
+    ptrs[e.pointerId]={x:e.clientX,y:e.clientY};
+    if(nPtr>=2){
+      if(pinchD>0){
+        var mid=pinchMid(), u=ptToUser(mid.x,mid.y);
+        zoomTo(pinchK*(pinchGap()/pinchD), u.x, u.y);
+      }
+      e.preventDefault(); return;
+    }
+    if(!armed) return;
+    var dx=e.clientX-prev.x, dy=e.clientY-prev.y;
+    moved+=Math.abs(dx)+Math.abs(dy);
+    /* Only now is it a drag rather than a click, so only now take the pointer:
+       capturing earlier would retarget the click away from the region under it. */
+    if(!dragging){
+      if(moved<=3) return;
+      dragging=true;
+      try{ svg.setPointerCapture(e.pointerId); }catch(err){}
+      root.setAttribute('data-panning','true');
+    }
+    var m=svg.getScreenCTM();
+    if(m&&m.a){ zx+=dx/m.a; zy+=dy/m.d; zApply(); }
+    e.preventDefault();
+  });
+
+  function endPtr(e){
+    if(!(e.pointerId in ptrs)) return;
+    delete ptrs[e.pointerId]; nPtr=Math.max(0,nPtr-1);
+    if(nPtr<2) pinchD=0;
+    if(nPtr===0){
+      if(dragging) swallowClick=true;   /* a drag is not a click on a region */
+      armed=false; dragging=false; root.setAttribute('data-panning','false');
+    }
+  }
+  svg.addEventListener('click',function(e){
+    if(swallowClick){ swallowClick=false; e.stopPropagation(); }
+  },true);
+  svg.addEventListener('pointerup',endPtr);
+  svg.addEventListener('pointercancel',endPtr);
+
+  /* A plain wheel keeps scrolling the host page -- a map that swallows the
+     scroll of the page it is embedded in is a nuisance. Ctrl or Cmd zooms,
+     which is also what a trackpad pinch sends. */
+  svg.addEventListener('wheel',function(e){
+    if(zoomOff()||!(e.ctrlKey||e.metaKey)) return;
+    e.preventDefault();
+    var u=ptToUser(e.clientX,e.clientY);
+    zoomTo(zk*Math.pow(0.9985,e.deltaY), u.x, u.y);
+  },{passive:false});
+
+  svg.addEventListener('dblclick',function(e){
+    if(zoomOff()) return;
+    var u=ptToUser(e.clientX,e.clientY);
+    zoomTo(zk*1.8,u.x,u.y);
+    e.preventDefault();
+  });
+
+  stage.addEventListener('keydown',function(e){
+    if(zoomOff()||e.target!==stage) return;
+    var step=48/zk;
+    switch(e.key){
+      case '+': case '=': zoomTo(zk*Z_STEP); break;
+      case '-': case '_': zoomTo(zk/Z_STEP); break;
+      case '0': zoomTo(Z_MIN); break;
+      case 'ArrowLeft':  zx+=step; zApply(); break;
+      case 'ArrowRight': zx-=step; zApply(); break;
+      case 'ArrowUp':    zy+=step; zApply(); break;
+      case 'ArrowDown':  zy-=step; zApply(); break;
+      default: return;
+    }
+    e.preventDefault();
+  });
+
   root.addEventListener('click',function(e){
     var t=e.target.closest('[data-region]');
     if(t){ var k=t.getAttribute('data-region');
@@ -704,6 +930,7 @@
   root.querySelector('[data-act="cities"]').setAttribute('aria-pressed',root.getAttribute('data-cities')!=='false');
   root.querySelector('[data-act="labels"]').textContent='Labels: '+(LABEL_TEXT[root.getAttribute('data-labels')]||'Both');
   setPhys(physMode());
+  zApply();
   reservePanel();
   select(root.getAttribute('data-selected')||'');
 
@@ -719,6 +946,9 @@
     get:function(){return root.getAttribute('data-selected')||null;},
     on:function(fn){listeners.push(fn);return this;},
     setTheme:function(t){root.setAttribute('data-theme',t);},
+    setZoom:function(k){zoomTo(+k);return this;},
+    getZoom:function(){return zk;},
+    resetView:function(){zoomTo(Z_MIN);return this;},
     regions:REGIONS,
     data:DATA
   };

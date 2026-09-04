@@ -94,11 +94,34 @@ Set these on the container div. They can also be changed at runtime.
                               <!-- independent attributes, one button: Physical
                                    cycles Off, Rivers, Ranges, Both. Set either
                                    by hand and the button reports it -->
+     data-zoom="true"        <!-- false removes zoom, pan and the control -->
      data-selected="kham">    <!-- utsang | kham | amdo | "" -->
 </div>
 ```
 
 `data-theme="auto"` follows the visitor's `prefers-color-scheme`.
+
+### Zoom and pan
+
+The map scales between 1× (fit) and 8×. Content sits in a single transformed
+`<g>` rather than a rewritten `viewBox`, so the sea and the locator inset stay
+outside it: the background is always painted, and the inset stays pinned to its
+corner at every zoom. Panning is clamped so the map always covers its own frame.
+
+Gestures are chosen so an embedded map never fights the page around it:
+
+| gesture | what happens |
+|---|---|
+| `+` / `−` / slider / `↺` | zoom about the centre, reset |
+| drag with a mouse | pan |
+| one finger | scrolls **your page** at fit zoom; pans the map once zoomed in |
+| two fingers | pinch to zoom, always |
+| wheel | scrolls **your page**; `Ctrl`/`⌘` and the wheel zooms |
+| double-click | zoom in about the pointer |
+| keyboard | focus the map, then `+` `−` `0` and the arrow keys |
+
+A plain wheel is deliberately left to the page. Set `data-zoom="false"` to drop
+the whole feature, including the control, for a fixed map.
 
 ## Restyling
 
@@ -127,6 +150,9 @@ Full list: `--tm-utsang --tm-kham --tm-amdo --tm-gold --tm-bg --tm-land
 TibetMap.select('kham');        // or 'utsang', 'amdo', '' to clear
 TibetMap.get();                 // 'kham' | null
 TibetMap.setTheme('light');
+TibetMap.setZoom(2.5);          // 1 (fit) to 8
+TibetMap.getZoom();             // 2.5
+TibetMap.resetView();           // back to fit, centred
 TibetMap.on(function (region) { // fires on every selection change
   console.log('selected:', region);
 });
