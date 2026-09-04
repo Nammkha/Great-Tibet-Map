@@ -404,10 +404,11 @@
   stroke-width:4.5px;stroke-linejoin:round;}
 .tibmap .tm-hybo,.tibmap .tm-rgbo,.tibmap .tm-pkbo{
   font-family:var(--tm-bo);letter-spacing:0;text-transform:none;font-style:normal;}
-/* With the Latin name hidden, the Tibetan one moves up into its place. */
-.tibmap[data-labels="bo"] .tm-hybo,
-.tibmap[data-labels="bo"] .tm-rgbo,
-.tibmap[data-labels="bo"] .tm-pkbo{transform:translateY(-13px);}
+/* The Tibetan name sits a line below the Latin one, and moves up into its place
+   when the Latin one is hidden. This rides on the wrapping .tm-boslot group and
+   never on the <text>, so the run keeps its Tibetan shaping -- see bilabel(). */
+.tibmap .tm-boslot{transform:translateY(13px);}
+.tibmap[data-labels="bo"] .tm-boslot{transform:none;}
 .tibmap .tm-hybo{font-size:12.5px;}
 .tibmap .tm-rgbo{font-size:12px;}
 .tibmap .tm-pkbo{font-size:11.5px;}
@@ -480,16 +481,28 @@
      tagged tm-en-only, so Tibetan mode shows Tibetan and nothing else. A
      feature with no Tibetan name yet is therefore unlabelled in that mode
      rather than falling back to Latin and mixing the two. */
-  /* The position goes on a wrapping <g>, never on the <text>. In Tibetan mode
-     the Tibetan name is nudged up into the slot the Latin one vacates, and that
-     nudge is a CSS transform -- which REPLACES a transform attribute on the same
-     element rather than composing with it. Set directly on the text, it wiped
-     out translate()/rotate() and collapsed every river and range name into the
-     top-left corner. On the text inside a positioned group it composes. */
+  /* Nothing positional ever goes on the <text> itself -- no x, y, dx, dy, and no
+     CSS transform either. Those are SVG's per-character text-positioning
+     attributes, and a run carrying them is laid out character by character, which
+     discards the OpenType shaping Tibetan depends on: subjoined letters stop
+     stacking under their base, and vowel signs detach and land on the baseline
+     beside it instead of above or below. Blink absorbs that and shapes the run
+     anyway, WebKit does not -- so these labels were correct in every desktop
+     browser, phone emulation included (still Blink), and came apart only on real
+     iPhones and iPads.
+
+     The vertical offset therefore rides on wrapping <g> elements, where it is an
+     ordinary transform and cannot reach the text run. Two of them, because a CSS
+     transform REPLACES a transform attribute on the same element rather than
+     composing with it: the outer <g> carries the slot offset as an attribute and
+     the inner one the Tibetan-mode nudge as CSS, so they compose instead of one
+     wiping out the other. */
   function bilabel(cls, boCls, feat, txtEn, txtBo, place, dy){
+    var slot='<g transform="translate(0,'+Number(dy)+')">';
     var out='<g '+place+' data-feat="'+esc(feat)+'">'+
-      '<text class="'+cls+' tm-en-only" dy="'+dy+'">'+esc(txtEn)+'</text>';
-    if(txtBo) out+='<text class="'+boCls+' tm-bo-only" dy="'+(Number(dy)+13)+'">'+txtBo+'</text>';
+      slot+'<text class="'+cls+' tm-en-only">'+esc(txtEn)+'</text></g>';
+    if(txtBo) out+=slot+'<g class="tm-boslot"><text class="'+boCls+
+      ' tm-bo-only">'+txtBo+'</text></g></g>';
     return out+'</g>';
   }
 
