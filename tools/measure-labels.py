@@ -12,25 +12,37 @@ with sync_playwright() as pw:
       // Latin name sizes for every feature the placer positions. In "both"
       // mode a Tibetan name sits under it, so the pair is measured as one box.
       const pair=(e)=>{const bb=e.getBBox(); return {w:bb.width,h:bb.height};};
-      document.querySelectorAll('.tm-rglab,.tm-hylab').forEach(e=>{
-        if(e.classList.contains('tm-rgbo')||e.classList.contains('tm-hybo')) return;
+      document.querySelectorAll('.tm-rglab,.tm-hylab,.tm-pklab').forEach(e=>{
+        if(e.classList.contains('tm-rgbo')||e.classList.contains('tm-hybo')
+           ||e.classList.contains('tm-pkbo')) return;
         res.labels[e.textContent.trim()]=pair(e);});
-      document.querySelectorAll('.tm-rgbo,.tm-hybo').forEach(e=>{
+      document.querySelectorAll('.tm-rgbo,.tm-hybo,.tm-pkbo').forEach(e=>{
         // widen the recorded box to cover whichever of the two names is longer
         const t=e.previousElementSibling && e.previousElementSibling.textContent.trim();
         if(!t||!res.labels[t]) return;
         const bb=e.getBBox();
         res.labels[t]={w:Math.max(res.labels[t].w,bb.width), h:res.labels[t].h+13};});
-      // everything a range name must avoid, as SVG-space boxes
-      const push=(e,kind)=>{const b=e.getBBox();
-        // getBBox ignores the element's own transform, so add translate() back
-        let dx=0,dy=0; const t=e.getAttribute('transform');
-        if(t){const m=/translate\\(([-\\d.]+)[ ,]([-\\d.]+)\\)/.exec(t); if(m){dx=+m[1];dy=+m[2];}}
+      // Everything a feature name must avoid, as boxes in viewBox units.
+      // Positions come from the element's own screen matrix rather than
+      // getBBox plus a parsed transform attribute: the Kham title is moved
+      // aside by a CSS transform when a physical layer is on, and parsing the
+      // attribute cannot see that, so the placer aimed at its old position.
+      const svg=document.querySelector('.tibmap__svg');
+      const inv=svg.getScreenCTM().inverse();
+      const P=(x,y,m)=>{const p=svg.createSVGPoint();p.x=x;p.y=y;
+                        const q=p.matrixTransform(m).matrixTransform(inv);return q;};
+      const push=(e,kind)=>{
+        const b=e.getBBox(), m=e.getScreenCTM(); if(!m) return;
+        const c=[P(b.x,b.y,m),P(b.x+b.width,b.y,m),
+                 P(b.x+b.width,b.y+b.height,m),P(b.x,b.y+b.height,m)];
+        const xs=c.map(p=>p.x), ys=c.map(p=>p.y);
         res.obstacles.push({kind,t:e.textContent.trim(),
-                            x:b.x+dx,y:b.y+dy,w:b.width,h:b.height});};
-      document.querySelectorAll('.tm-cname,.tm-cbo,.tm-rname,.tm-rbo,.tm-pklab,.tm-pkbo').forEach(e=>{
-        const k=e.classList.contains('tm-pklab')||e.classList.contains('tm-pkbo')?'peak':
-                (e.classList.contains('tm-rname')||e.classList.contains('tm-rbo'))?'region':'town';
+                            x:Math.min(...xs),y:Math.min(...ys),
+                            w:Math.max(...xs)-Math.min(...xs),
+                            h:Math.max(...ys)-Math.min(...ys)});};
+      document.querySelectorAll('.tm-cname,.tm-cbo,.tm-rname,.tm-rbo,.tm-ctry').forEach(e=>{
+        const k=e.classList.contains('tm-ctry')?'country'
+              :(e.classList.contains('tm-rname')||e.classList.contains('tm-rbo'))?'region':'town';
         push(e,k);});
       return res;}""")
     json.dump(out, open('measured.json','w'))
