@@ -144,7 +144,17 @@
 
 /* ── body grid ───────────────────────────────────────────── */
 .tibmap__body{display:grid;grid-template-columns:minmax(0,1fr) 316px;}
-@container (max-width:900px){ .tibmap__body{grid-template-columns:minmax(0,1fr);} }
+/* The controls are a third grid item, spanning the full width under the map and
+   the panel. Once the panel drops below the map they would otherwise be the very
+   last thing on the page, a whole panel's worth of scrolling away from the map
+   they act on, so `order` lifts them to sit directly beneath it. */
+.tibmap__body>.tibmap__foot{grid-column:1/-1;}
+@container (max-width:900px){
+  .tibmap__body{grid-template-columns:minmax(0,1fr);}
+  .tibmap__stage{order:1;}
+  .tibmap__body>.tibmap__foot{order:2;}
+  .tibmap__panel{order:3;}
+}
 
 /* The SVG's own ratio sets the stage's natural height; when the panel beside it
    is taller, the stage stretches and the map fills that height instead of being
@@ -533,14 +543,14 @@
       '</svg>'+
     '</div>'+
     '<aside class="tibmap__panel" id="tibmap-panel" aria-live="polite"><div class="tibmap__pbody"></div></aside>'+
-  '</div>'+
-  '<div class="tibmap__foot">'+
-    '<button class="tibmap__ctrl" type="button" data-act="labels">Labels: Both</button>'+
-    '<button class="tibmap__ctrl" type="button" data-act="admin" aria-pressed="false">Current borders</button>'+
-    '<button class="tibmap__ctrl" type="button" data-act="cities" aria-pressed="true">Towns</button>'+
-    '<button class="tibmap__ctrl" type="button" data-act="inset" aria-pressed="true">Locator</button>'+'<button class="tibmap__ctrl" type="button" data-act="theme">Light</button>'+
-    '<button class="tibmap__ctrl" type="button" data-act="rivers" aria-pressed="false">Rivers</button>'+
-    '<button class="tibmap__ctrl" type="button" data-act="ranges" aria-pressed="false">Ranges</button>'+
+    '<div class="tibmap__foot">'+
+      '<button class="tibmap__ctrl" type="button" data-act="labels">Labels: Both</button>'+
+      '<button class="tibmap__ctrl" type="button" data-act="admin" aria-pressed="false">Current borders</button>'+
+      '<button class="tibmap__ctrl" type="button" data-act="cities" aria-pressed="true">Towns</button>'+
+      '<button class="tibmap__ctrl" type="button" data-act="inset" aria-pressed="true">Locator</button>'+'<button class="tibmap__ctrl" type="button" data-act="theme">Light</button>'+
+      '<button class="tibmap__ctrl" type="button" data-act="rivers" aria-pressed="false">Rivers</button>'+
+      '<button class="tibmap__ctrl" type="button" data-act="ranges" aria-pressed="false">Ranges</button>'+
+    '</div>'+
   '</div>'+
   '<p class="tibmap__note">Historically Tibet was divided into three cultural regions called \u00dc-Tsang, Kham and Amdo. Each one of these three regions has developed its own distinct dialect of Tibetan. Most widely spoken is the Lhasa dialect, also called Standard Tibetan, which is spoken in Central Tibet and also in Exile by most Tibetans. In Kham the Khams Tibetan dialect is spoken and in Amdo the Amdo Tibetan dialect. The Tibetan dialects are subject to the Tibetic languages which are part of the Tibeto-Burman languages. Modern Tibetan derives from Classical Tibetan, which is the written norm, and from Old Tibetan. The official language of Bhutan, Dzongkha, is also closely related to Tibetan.</p>';
 
