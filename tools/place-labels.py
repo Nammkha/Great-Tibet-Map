@@ -82,7 +82,14 @@ OB = [(o, corners(o['x'] + o['w'] / 2, o['y'] + o['h'] / 2, o['w'], o['h'], 0),
        SOFT if o['kind'] == 'region' else 1.0)
       for o in M['obstacles']]
 
-FEATURES = ([(g['en'], 'range', bp.rings_of(g['d'])) for g in DATA['ranges']] +
+# A rim range clipped away to nothing -- Karakoram lies wholly outside the
+# outline -- still needs a line to hang its name on, so fall back to the full
+# spine. Without this the search raised ValueError and every later run
+# silently reused the previous placement.
+FEATURES = ([(g['en'], 'range',
+             [r for r in bp.rings_of(g['d']) if len(r) > 1]
+             or [r for r in bp.rings_of(g.get('dFull', '')) if len(r) > 1])
+            for g in DATA['ranges']] +
             [(r['en'], 'river', bp.rings_of(r['d'])) for r in DATA['rivers']] +
             [(k['en'], 'peak', [[tuple(k['p'])]]) for k in DATA['peaks']])
 
