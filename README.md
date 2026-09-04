@@ -175,17 +175,19 @@ shapes actually shown, not numbers quoted from elsewhere:
 
 | Region | Area as drawn | Share |
 |---|---:|---:|
-| Ü-Tsang | 1,224,104 km² | 52.5% |
-| Kham | 540,293 km² | 23.2% |
-| Amdo | 568,910 km² | 24.4% |
-| **Combined** | **2,333,307 km²** | |
+| Ü-Tsang | 1,074,855 km² | 49.0% |
+| Kham | 540,293 km² | 24.7% |
+| Amdo | 576,079 km² | 26.3% |
+| **Combined** | **2,191,227 km²** | |
 
-**The northern rim follows the Kunlun.** Between 80.4°E and 91.0°E the boundary
-had been drawn along the *southern* foot of the Kunlun, which put the whole
-range — Khunu Ri Gyu, the wall the plateau ends at — outside Tibet. It now runs
-along the range's northern edge, where the plateau drops into the Tarim, taken
-from Natural Earth and carried east onto the Altyn Tagh. See
-[INTEGRATION.md](INTEGRATION.md) for the detail.
+**Checked against the CTA's own map.** The Central Tibetan Administration
+publishes [a map of Tibet under the PRC](https://tibet.net/about-tibet/map-of-tibet/)
+whose silhouette is the TAR, plus Qinghai, plus the Tibetan prefectures of
+Gansu, Sichuan and Yunnan — so its northern and western edge is the TAR and
+Qinghai provincial boundary. Measured against that boundary in Natural Earth
+10m, the line here agrees to within 0.25° of latitude from 79°E round to 98°E,
+which is finer than the ink on the printed map. Where it did not, at the top of
+the Tsaidam, it now does. See [INTEGRATION.md](INTEGRATION.md) for the detail.
 
 **These are traditional cultural regions of Great Tibet** Their
 historical limits were never surveyed, they shifted over time, and different
@@ -208,7 +210,8 @@ outside the present-day boundaries of Chinese governance.
 Tibetan cultural-area map by extracting that map's outline and fitting the two
 together; they agree over 92.9% of their combined area. The remainder is a
 fringe of a few tens of kilometres, plus Arunachal Pradesh, which lies outside
-this map by design.
+this map by design. That figure predates the Tsaidam correction above, which
+added about 7,000 km².
 
 [`INTEGRATION.md`](INTEGRATION.md) documents the prefecture grouping for each
 region and the northern-rim closure in full.

@@ -200,24 +200,41 @@ notches along that edge that no published cultural-area map draws. The northern
 boundary is therefore closed to follow the continuous landform. Everywhere else
 the outline is the prefecture mosaic as-is.
 
-Between 80.4°E and 91.0°E that landform is the Kunlun, which is where the
-plateau ends and the Tarim begins. The line first drawn there followed the
-range's *southern* foot — its vertices sat within 0.1° of the southern edge of
-Natural Earth's KUNLUN MOUNTAINS polygon — so the whole range lay outside
-Tibet. It now follows the same polygon's northern edge, carried east onto the
-Altyn Tagh (the southern edge of the TARIM BASIN polygon) until it meets the
-line the map already drew along the Tsaidam's northern wall. The Ladakh
-frontier is not moved; it is continued on its own bearing until it reaches the
-rim at 81.7°E. This added about 155,000 km² along that edge, almost all of it
-to Ü-Tsang, and brought Khunu Ri Gyu inside the map. Natural Earth is public
-domain, so nothing here encumbers the CC0 dedication.
+**Checked against the CTA's own map.** The Central Tibetan Administration
+publishes [a map of Tibet under the PRC](https://tibet.net/about-tibet/map-of-tibet/).
+Its silhouette is the TAR, plus Qinghai, plus the Tibetan prefectures of Gansu,
+Sichuan and Yunnan — the same grouping used here — so its northern and western
+edge is simply the TAR and Qinghai provincial boundary. That makes it something
+this map can be measured against rather than eyeballed: the boundary is in
+Natural Earth 10m admin-1, which is public domain.
+
+Sampled every half-degree, the outline here sits within 0.25° of latitude of
+that boundary from 79°E all the way round to 98°E — finer than the ink on the
+printed map — with two exceptions.
+
+The first is between 88.5°E and 90.5°E, where Xinjiang reaches south to 36°N in
+a wedge 1.4° wide and 2.4° deep, separating the TAR from Qinghai. The CTA map
+closes that wedge and so does this one: the line steps up across it instead of
+tracing it.
+
+The second was at the top of the Tsaidam. Between 93.4°E and 96.0°E the line
+cut a chord 0.2–0.6° south of the smooth arc the CTA map draws over Tsonub,
+clipping off the Lenghu and Mahai country. It now follows that arc, taken from
+Natural Earth. About 7,000 km², to Amdo.
+
+Khunu Ri Gyu, the Kunlun, is the wall this rim runs along, so most of the range
+sits on the line rather than inside it; the widget draws the part that falls
+outside faintly. Moving the rim north to put the whole range inside would have
+put the line 0.6–3.0° north of where the CTA draws it, which is not a trade
+this map makes: the boundary follows the CTA's, and the range is drawn where it
+is.
 
 **Checked against a reference.** The silhouette was compared with a published
 Tibetan cultural-area map by extracting that map's outline and fitting the two
 together: they agree over 92.9% of their combined area. The residual differences
 are the fringe of a few tens of kilometres, plus Arunachal Pradesh, which lies
-outside this map by design. That comparison was made before the northern rim
-was corrected, so it does not account for the strip described above.
+outside this map by design. That comparison predates the Tsaidam correction
+described above, which added about 7,000 km².
 
-**Areas as drawn:** Ü-Tsang 1,224,104 km² · Kham 540,293 km² ·
-Amdo 568,910 km² · combined 2,333,307 km².
+**Areas as drawn:** Ü-Tsang 1,074,855 km² · Kham 540,293 km² ·
+Amdo 576,079 km² · combined 2,191,227 km².
